@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project1.SignInController">
+    <children>
+        <TextField fx:id="emailField" promptText="Bilkent E-mail"/>
+        <PasswordField fx:id="passwordField" promptText="Password"/>
+        <Button text="Sign In" onAction="#handleSignIn"/>
+    </children>
+</VBox>

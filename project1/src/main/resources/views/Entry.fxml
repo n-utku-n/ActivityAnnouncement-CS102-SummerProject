@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project1.EntryController">
+    <children>
+        <Label text="🎓 BilCall" style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
+        <HBox alignment="CENTER" spacing="20">
+            <children>
+                <Button text="Sign In" fx:id="signInButton" onAction="#handleSignIn"/>
+                <Button text="Sign Up" fx:id="signUpButton" onAction="#handleSignUp"/>
+            </children>
+        </HBox>
+    </children>
+</VBox>
+

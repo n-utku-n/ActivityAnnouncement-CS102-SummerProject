@@ -1,2 +1,5 @@
+com\project1\EntryController.class
 com\project1\App.class
+com\project1\SignUpController.class
+com\project1\SignInController.class
 com\project1\FirebaseInitializer.class

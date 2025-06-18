@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.MainDashboardController">
+
+    <!-- Üst bar -->
+    <top>
+        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f5;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <children>
+                <Label text="🎓 BilCal" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                <Pane HBox.hgrow="ALWAYS" />
+                <Button fx:id="profileButton" text="👤 Profil" onAction="#handleProfile" />
+            </children>
+        </HBox>
+    </top>
+
+    <!-- Orta içerik -->
+    <center>
+        <VBox spacing="15" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <children>
+                <!-- Arama çubuğu -->
+                <TextField fx:id="searchField" promptText="Etkinlik veya kulüp ara..." maxWidth="400" />
+
+                <!-- Etkinlik kartları 2x2 -->
+                <GridPane fx:id="eventGrid" hgap="20" vgap="20">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                </GridPane>
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>

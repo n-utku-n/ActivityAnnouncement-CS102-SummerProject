@@ -1,0 +1,29 @@
+package com.project1;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+
+public class SceneChanger {
+
+    public static void switchScene(ActionEvent event, String fxmlFileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(SceneChanger.class.getResource("/views/" + fxmlFileName.trim()));
+
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            System.out.println("➡️ Sahne yüklendi: " + fxmlFileName);
+
+        } catch (Exception e) {
+            System.out.println("❌ Sahne geçişinde hata: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}

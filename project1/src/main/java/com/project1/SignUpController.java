@@ -2,9 +2,14 @@ package com.project1;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.UserRecord.CreateRequest;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.firebase.cloud.FirestoreClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.event.ActionEvent;
 
 public class SignUpController {
 
@@ -24,12 +29,13 @@ public class SignUpController {
     private PasswordField passwordField;
 
     @FXML
-    private void handleSignUp() {
-        String name = nameField.getText();
-        String surname = surnameField.getText();
-        String studentId = idField.getText();
-        String email = emailField.getText();
+    private void handleSignUp(ActionEvent event) {
+        String name = nameField.getText().trim();
+        String surname = surnameField.getText().trim();
+        String studentId = idField.getText().trim();
+        String email = emailField.getText().trim();
         String password = passwordField.getText();
+        String role = "student";
 
         if (!email.endsWith("@ug.bilkent.edu.tr")) {
             System.out.println("⚠️ Sadece Bilkent mail adresiyle kayıt olunabilir.");
@@ -42,7 +48,8 @@ public class SignUpController {
         }
 
         try {
-            UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+            // Firebase Authentication
+            CreateRequest request = new CreateRequest()
                     .setEmail(email)
                     .setPassword(password)
                     .setDisplayName(name + " " + surname);
@@ -50,7 +57,13 @@ public class SignUpController {
             UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
             System.out.println("✅ Kullanıcı başarıyla oluşturuldu: " + userRecord.getUid());
 
-            // İsteğe bağlı: Firestore'da öğrenci ID'si vb. bilgiler saklanabilir
+            // Firestore
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentReference docRef = db.collection("users").document(userRecord.getUid());
+
+            UserModel user = new UserModel(name, surname, studentId, email,role);
+            docRef.set(user);
+            System.out.println("✅ Firestore'a kullanıcı kaydedildi.");
 
         } catch (Exception e) {
             System.out.println("❌ Kayıt başarısız: " + e.getMessage());

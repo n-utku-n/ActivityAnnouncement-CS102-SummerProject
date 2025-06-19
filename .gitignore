@@ -1,16 +1,19 @@
-# Compiled class file
+# Firebase config - DO NOT TRACK THIS FILE!
+src/main/resources/firebase/serviceAccountKey.json
+
+# Output class files
 *.class
 
-# Log file
+# Logs
 *.log
 
-# BlueJ files
+# BlueJ
 *.ctxt
 
-# Mobile Tools for Java (J2ME)
+# J2ME tools
 .mtj.tmp/
 
-# Package Files #
+# Java packages
 *.jar
 *.war
 *.nar
@@ -19,7 +22,6 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# VM crash logs
 hs_err_pid*
 replay_pid*
-**/serviceAccountKey.json

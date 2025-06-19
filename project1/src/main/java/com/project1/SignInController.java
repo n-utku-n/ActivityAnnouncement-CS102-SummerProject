@@ -3,6 +3,7 @@ package com.project1;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 
 import java.io.*;
@@ -23,6 +24,9 @@ public class SignInController {
     private TextField emailField;
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private PasswordField passwordField;
 
     private static final String API_KEY = "AIzaSyDYluEpPgovtKRDW5bjIMMg4BNLgjy52YM";
@@ -34,6 +38,7 @@ public class SignInController {
 
         if (email.isEmpty() || password.isEmpty()) {
             System.out.println("❗ E-mail ve şifre boş olamaz.");
+            errorLabel.setText("Email and password cannot be empty.");
             return;
         }
 
@@ -71,6 +76,7 @@ public class SignInController {
                     if (document.exists()) {
                         String role = document.getString("role");
                         System.out.println("🎯 Kullanıcı rolü: " + role);
+                        errorLabel.setText(""); // Hata mesajı temizlensin
 
                         switch (role) {
                             case "student":
@@ -82,6 +88,7 @@ public class SignInController {
                                 break;
                             default:
                                 System.out.println("⚠️ Tanımsız rol: " + role);
+                                errorLabel.setText("Unknown role. Please contact support.");
                         }
                     } else {
                         System.out.println("❌ Firestore’da kullanıcı bulunamadı.");
@@ -90,16 +97,33 @@ public class SignInController {
                     System.out.println("❌ Firestore'dan rol alınamadı: " + e.getMessage());
                 }
 
-            } else {
+            } 
+            else {
                 InputStream es = conn.getErrorStream();
                 String errorResponse = new String(es.readAllBytes(), StandardCharsets.UTF_8);
                 JSONObject errorJson = new JSONObject(errorResponse);
                 String errorMessage = errorJson.getJSONObject("error").getString("message");
                 System.out.println("❌ Giriş başarısız: " + errorMessage);
+
+                switch (errorMessage) {
+                    case "EMAIL_NOT_FOUND":
+                    case "INVALID_PASSWORD":
+                        errorLabel.setText("Incorrect email or password.");
+                        break;
+                    case "USER_DISABLED":
+                        errorLabel.setText("This account has been disabled.");
+                        break;
+                    default:
+                        errorLabel.setText("Login failed. Please try again.");
+                        break;
+                }
+                
             }
+            
 
         } catch (Exception e) {
             System.out.println("❌ Hata: " + e.getMessage());
+            errorLabel.setText("An unexpected error occurred." +e.getMessage()+ " Please try again.");
         }
     }
 }

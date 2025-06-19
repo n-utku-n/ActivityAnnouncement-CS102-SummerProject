@@ -9,6 +9,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 
 public class SignUpController {
@@ -29,6 +30,10 @@ public class SignUpController {
     private PasswordField passwordField;
 
     @FXML
+    private Label errorLabel;
+
+
+    @FXML
     private void handleSignUp(ActionEvent event) {
         String name = nameField.getText().trim();
         String surname = surnameField.getText().trim();
@@ -39,11 +44,13 @@ public class SignUpController {
 
         if (!email.endsWith("@ug.bilkent.edu.tr")) {
             System.out.println("⚠️ Sadece Bilkent mail adresiyle kayıt olunabilir.");
+            errorLabel.setText("Please use a Bilkent University email address.");
             return;
         }
 
         if (password.length() < 6) {
             System.out.println("⚠️ Şifre en az 6 karakter olmalıdır.");
+            errorLabel.setText("Password must be at least 6 characters long.");
             return;
         }
 
@@ -56,6 +63,7 @@ public class SignUpController {
 
             UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
             System.out.println("✅ Kullanıcı başarıyla oluşturuldu: " + userRecord.getUid());
+            errorLabel.setText("");
 
             // Firestore
             Firestore db = FirestoreClient.getFirestore();
@@ -64,9 +72,12 @@ public class SignUpController {
             UserModel user = new UserModel(name, surname, studentId, email,role);
             docRef.set(user);
             System.out.println("✅ Firestore'a kullanıcı kaydedildi.");
+            
+            SceneChanger.switchScene(event, "main_dashboard.fxml");
 
         } catch (Exception e) {
             System.out.println("❌ Kayıt başarısız: " + e.getMessage());
+            errorLabel.setText("Registration failed." +e.getMessage()+ " Please try again.");
         }
     }
 }

@@ -10,6 +10,7 @@
         <TextField fx:id="idField" promptText="Öğrenci Numarası"/>
         <TextField fx:id="emailField" promptText="Bilkent Maili"/>
         <PasswordField fx:id="passwordField" promptText="Şifre"/>
+        <Label fx:id="errorLabel" textFill="red" wrapText="true" />
         <Button text="Sign Up" onAction="#handleSignUp"/>
     </children>
 </VBox>

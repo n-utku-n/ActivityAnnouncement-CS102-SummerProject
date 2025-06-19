@@ -5,4 +5,5 @@ com\project1\EntryController.class
 com\project1\App.class
 com\project1\SceneChanger.class
 com\project1\MainDashboardController.class
+com\project1\AdminDashboardController.class
 com\project1\UserModel.class

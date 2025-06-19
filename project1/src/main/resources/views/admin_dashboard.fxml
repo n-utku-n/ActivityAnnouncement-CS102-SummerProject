@@ -1,12 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="15">
-    <children>
-        <Label text="🛠️ Admin Paneli"/>
-        <Button text="Kullanıcı Rollerini Yönet"/>
-        <Button text="Etkinlik Taleplerini Onayla"/>
-    </children>
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.AdminDashboardController">
 
+    <!-- Üst Bar -->
+    <top>
+        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 10; -fx-background-color: #f5f5f5;">
+            <children>
+                <Label text="🎓 BilCall" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="profileButton" text="👤 Admin Profile" />
+            </children>
+        </HBox>
+    </top>
+
+    <!-- Ana içerik -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <content>
+                <VBox spacing="30" style="-fx-padding: 20;">
+
+                    <!-- Arama ve Filtreleme -->
+                    <HBox spacing="10">
+                        <TextField fx:id="searchField" promptText="Search users..." />
+                        <ComboBox fx:id="filterComboBox" promptText="Filter by role..." prefWidth="150" />
+                        <Button fx:id="refreshButton" text="🔁 Refresh" />
+                    </HBox>
+
+                    <!-- Clubs -->
+                    <VBox spacing="10">
+                       <Label text="Clubs" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox fx:id="clubsListBox" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;" />
+                    </VBox>
+
+                    <!-- Kullanıcılar -->
+                    <VBox spacing="10">
+                        <Label text="All Users" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox fx:id="userListBox" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;" />
+                    </VBox>
+
+                    <!-- Etkinlikler -->
+                    <VBox spacing="10">
+                        <Label text="All Events" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <VBox fx:id="eventListBox" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;" />
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -7,6 +7,7 @@
     <children>
         <TextField fx:id="emailField" promptText="Bilkent E-mail"/>
         <PasswordField fx:id="passwordField" promptText="Password"/>
+        <Label fx:id="errorLabel" textFill="red" wrapText="true" />
         <Button text="Sign In" onAction="#handleSignIn"/>
     </children>
 </VBox>

@@ -1,19 +1,19 @@
-# Firebase config - DO NOT TRACK THIS FILE!
-src/main/resources/firebase/serviceAccountKey.json
+# === Firebase config ===
+# Do NOT track sensitive Firebase key file!
+project1/src/main/resources/firebase/serviceAccountKey.json
 
-# Output class files
+# === Build output ===
+/target/
 *.class
 
-# Logs
+# === Logs ===
 *.log
 
-# BlueJ
-*.ctxt
+# === IDE-specific files ===
+*.ctxt        # BlueJ
+.mtj.tmp/     # J2ME Mobile Tools
 
-# J2ME tools
-.mtj.tmp/
-
-# Java packages
+# === Java package archives ===
 *.jar
 *.war
 *.nar
@@ -22,6 +22,6 @@ src/main/resources/firebase/serviceAccountKey.json
 *.tar.gz
 *.rar
 
-# VM crash logs
+# === VM crash logs ===
 hs_err_pid*
 replay_pid*

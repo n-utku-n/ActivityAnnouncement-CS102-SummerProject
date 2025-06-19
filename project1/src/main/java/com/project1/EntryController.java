@@ -10,6 +10,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Called when the Sign In button is clicked.
+ * Navigates the user to the Sign In screen.
+ * @author Utku
+ */
 public class EntryController {
 
     @FXML
@@ -24,6 +29,11 @@ public class EntryController {
         }
     }
 
+    /**
+     * Called when the Sign Up button is clicked.
+     * Navigates the user to the Sign Up screen.
+     * @author Utku
+     */
     @FXML
     private void handleSignUp(ActionEvent event) {
         System.out.println("Sign Up tıklandı!");

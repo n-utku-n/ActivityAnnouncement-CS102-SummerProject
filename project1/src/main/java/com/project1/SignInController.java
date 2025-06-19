@@ -18,6 +18,15 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import org.json.JSONObject;
 
+/**
+ * Controller class for handling user sign-in logic.
+ * <p>
+ * Authenticates the user via Firebase Authentication REST API and
+ * redirects to the appropriate dashboard based on role retrieved from Firestore.
+ * </p>
+ *
+ * @author Utku
+ */
 public class SignInController {
 
     @FXML
@@ -31,6 +40,13 @@ public class SignInController {
 
     private static final String API_KEY = "AIzaSyDYluEpPgovtKRDW5bjIMMg4BNLgjy52YM";
 
+     /**
+     * Handles sign-in button click.
+     * Validates user input, sends request to Firebase Authentication API,
+     * and redirects user to appropriate dashboard if successful.
+     *
+     * @param event the ActionEvent triggered by the Sign In button.
+     */
     @FXML
     private void handleSignIn(ActionEvent event) {
         String email = emailField.getText().trim();

@@ -12,6 +12,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 
+/**
+ * Controller class for user registration (Sign Up).
+ * <p>
+ * Handles form validation, user creation via Firebase Authentication,
+ * and stores user metadata in Firestore. Redirects to the main dashboard on success.
+ * </p>
+ *
+ * @author Utku
+ */
 public class SignUpController {
 
     @FXML
@@ -33,6 +42,13 @@ public class SignUpController {
     private Label errorLabel;
 
 
+    /**
+     * Handles the sign-up button click event.
+     * Validates inputs, registers the user in Firebase Authentication,
+     * and saves user data in Firestore.
+     *
+     * @param event the ActionEvent triggered by the Sign Up button.
+     */
     @FXML
     private void handleSignUp(ActionEvent event) {
         String name = nameField.getText().trim();

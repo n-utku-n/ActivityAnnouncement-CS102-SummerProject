@@ -1,27 +1,33 @@
-# === Firebase config ===
-# Do NOT track sensitive Firebase key file!
-project1/src/main/resources/firebase/serviceAccountKey.json
+# === Firebase ===
+# Firebase servis hesabı anahtarı – kesinlikle Git'e eklenmemeli!
+src/main/resources/firebase/serviceAccountKey.json
 
-# === Build output ===
+# === Maven ===
+# Maven derleme çıktısı
 target/
 *.class
 
-# === Logs ===
+# === Java IDE Ayarları ===
+# IntelliJ IDEA ve VS Code gibi editörler için
+.vscode/
+.idea/
+*.iml
+
+# === Sistem Dosyaları ===
+.DS_Store
+Thumbs.db
+
+# === Log Dosyaları ve Geçici Çıktılar ===
 *.log
+*.tmp
+*.swp
 
-# === IDE-specific files ===
-*.ctxt        # BlueJ
-.mtj.tmp/     # J2ME Mobile Tools
+# === Test ve Hata Kayıtları ===
+*.pid
+*.hprof
 
-# === Java package archives ===
+# === Paket Arşivleri (Opsiyonel, eğer jar/war dışa aktarmıyorsan) ===
 *.jar
 *.war
-*.nar
-*.ear
 *.zip
 *.tar.gz
-*.rar
-
-# === VM crash logs ===
-hs_err_pid*
-replay_pid*

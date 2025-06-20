@@ -21,7 +21,7 @@ Bu proje, Bilkent Üniversitesi kulüplerinin etkinliklerini öğrencilere duyur
 
 Uygulamanın çalışması için `serviceAccountKey.json` dosyasına ihtiyacınız vardır.
 
-Lütfen aşağıdaki adımları izleyin:
+Lütfen aşağıdaki iki yöntemden birini izleyin:
 
 1. Firebase konsolunda bir proje oluşturun.
 2. Sol menüden “Proje Ayarları” → “Hizmet Hesapları” sekmesine gidin.
@@ -31,7 +31,13 @@ Lütfen aşağıdaki adımları izleyin:
 
    project1/src/main/resources/firebase/serviceAccountKey.json
 
-Not: Bu dosya .gitignore içine alınmıştır ve asla GitHub’a yüklenmemelidir.
+   # YA DA
+
+   Utku'nun sizinle paylaştığı dosyayı belirtilen adla belirtilen yere yapıştırın (sorun olduğunu düşündüğünüz zaman tekrar isteyebilirsiniz):
+      project1/src/main/resources/firebase/serviceAccountKey.json
+
+
+Not: Bu dosya .gitignore içine alınmıştır ve ASLA GitHub’a yüklenmemelidir.
 
 ------------------------------------------------------------
 ⚠️ UYARI: Bu projeyi daha önce klonladıysanız...
@@ -99,6 +105,11 @@ Please follow these steps:
 5. Place the file in the following directory:
 
    project1/src/main/resources/firebase/serviceAccountKey.json
+
+    # OR
+
+   Copy the file that Utku shared with you with the specified name to the specified location (you can request it again if you think there is a problem):
+      project1/src/main/resources/firebase/serviceAccountKey.json
 
 Note: This file is listed in `.gitignore` and **must never be uploaded to GitHub**.
 

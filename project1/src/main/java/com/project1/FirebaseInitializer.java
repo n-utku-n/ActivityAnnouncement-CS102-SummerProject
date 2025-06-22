@@ -30,6 +30,7 @@ public class FirebaseInitializer {
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setStorageBucket("project1-9c22f.firebasestorage.app")  // 🔸 BU SATIRI EKLE
                     .build();
 
             FirebaseApp.initializeApp(options);

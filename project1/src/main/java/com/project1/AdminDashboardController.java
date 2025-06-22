@@ -3,8 +3,12 @@ package com.project1;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -39,61 +43,48 @@ public class AdminDashboardController {
 
     @FXML
     private VBox clubsListBox;
-
-    /**
-     * Initializes the admin dashboard UI. Called automatically after FXML is loaded.
-     * Sets up combo box filter options. 
-     * @author Utku
-     */
+    
     @FXML
-    private void initialize() {
-        System.out.println("📋 Admin dashboard initialized");
+    private Button addClubButton;
 
-        filterComboBox.getItems().addAll("All", "student", "club_manager", "pending");
-        filterComboBox.setValue("All");
+   @FXML
+private void initialize() {
+    System.out.println("📋 Admin dashboard initialized");
 
-        loadClubs();
-        loadUsers("", "All");
+    // ComboBox ayarları
+    filterComboBox.getItems().addAll("All", "student", "club_manager", "pending");
+    filterComboBox.setValue("All");
+
+    // Kulüp kartları admin görünümlü yüklensin (butonlarla)
+    refreshClubList();
+
+    // Kullanıcı ve etkinlikleri yükle
+    loadUsers("", "All");
+    loadEvents();
+
+    // Refresh butonu: her şey yeniden yüklensin
+    refreshButton.setOnAction(e -> {
+        refreshClubList(); // değiştirildi
+        loadUsers(searchField.getText().trim(), filterComboBox.getValue());
         loadEvents();
+    });
 
-        refreshButton.setOnAction(e -> {
-            loadClubs();
-            loadUsers(searchField.getText().trim(), filterComboBox.getValue());
-            loadEvents();
-        });
+    // Arama kutusu değişince kullanıcı listesi güncellensin
+    searchField.textProperty().addListener((observable, oldVal, newVal) -> {
+        loadUsers(newVal.trim(), filterComboBox.getValue());
+    });
 
-        searchField.textProperty().addListener((observable, oldVal, newVal) -> {
-            loadUsers(newVal.trim(), filterComboBox.getValue());
-        });
+    // ComboBox filtre değeri değişince kullanıcı listesi güncellensin
+    filterComboBox.valueProperty().addListener((observable, oldVal, newVal) -> {
+        loadUsers(searchField.getText().trim(), newVal);
+    });
+}
 
-        filterComboBox.valueProperty().addListener((observable, oldVal, newVal) -> {
-            loadUsers(searchField.getText().trim(), newVal);
-        });
+    @FXML
+    private void handleAddClubButton(ActionEvent event) {
+        SceneChanger.switchScene(event, "add_club.fxml");
     }
 
-         /**
-     * Loads and displays all clubs from the Firestore database.
-     * Populates the clubsListBox with club cards containing name and description.
-     */
-    private void loadClubs() {
-        clubsListBox.getChildren().clear();
-        Firestore db = FirestoreClient.getFirestore();
-
-        ApiFuture<QuerySnapshot> future = db.collection("clubs").get();
-        try {
-            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            for (QueryDocumentSnapshot doc : documents) {
-                VBox card = new VBox(5);
-                card.setStyle("-fx-border-color: gray; -fx-padding: 10;");
-                Label name = new Label("Club: " + doc.getString("name"));
-                Label description = new Label("About: " + doc.getString("description"));
-                card.getChildren().addAll(name, description);
-                clubsListBox.getChildren().add(card);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
 
      /**
      * Loads and filters user data from Firestore, then displays it.
@@ -207,4 +198,33 @@ public class AdminDashboardController {
         db.collection("events").document(eventId).delete();
         refreshButton.fire();
     }
+
+        /**
+     * Refreshes the list of clubs displayed in the UI.
+     * Fetches all documents from the 'clubs' collection in Firestore,
+     * loads a UI card for each club using the 'club_card.fxml' template,
+     * sets the data on the card controller, and adds the card to the list box.
+     * In case of any errors (e.g., Firestore connection issues), the exception is printed.
+     */
+    protected void refreshClubList() {
+    clubsListBox.getChildren().clear();
+    Firestore db = FirestoreClient.getFirestore();
+
+    try {
+        for (var doc : db.collection("clubs").get().get().getDocuments()) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/club_card_admin.fxml"));
+
+            AnchorPane card = loader.load();
+            ClubCardAdminController controller = loader.getController();
+            controller.setDashboardController(this);
+            controller.setData(doc.getId(), doc.getData());
+            clubsListBox.getChildren().add(card);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
+
 }

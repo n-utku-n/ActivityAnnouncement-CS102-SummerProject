@@ -32,9 +32,13 @@
                         <Button fx:id="refreshButton" text="🔁 Refresh" />
                     </HBox>
 
-                    <!-- Clubs -->
+                   <!-- Clubs -->
                     <VBox spacing="10">
-                       <Label text="Clubs" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <!-- Label ve Add Club butonu aynı HBox içinde -->
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Clubs" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                            <Button fx:id="addClubButton" text="➕ Add Club" onAction="#handleAddClubButton" />
+                        </HBox>
                         <VBox fx:id="clubsListBox" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;" />
                     </VBox>
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox fx:id="eventCard" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project1.EventCardController"
+      spacing="10" style="-fx-padding: 10; -fx-border-color: lightgray; -fx-background-color: white;">
+
+    <!-- Etkinlik posteri / ana görsel -->
+    <ImageView fx:id="eventImage" fitHeight="150" fitWidth="300" preserveRatio="true" />
+
+    <!-- Alt içerik -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+
+        <!-- Kulüp logosu -->
+        <ImageView fx:id="clubLogo" fitHeight="50" fitWidth="50" />
+
+        <!-- Etkinlik bilgileri -->
+        <VBox spacing="5">
+            <Label fx:id="eventNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Label fx:id="minParticipantsLabel" />
+            <Label fx:id="maxParticipantsLabel" />
+            <Label fx:id="currentParticipantsLabel" />
+        </VBox>
+
+        <Pane HBox.hgrow="ALWAYS" />
+
+        <!-- Detay butonu -->
+        <Button fx:id="detailsButton" text="📄 Details" onAction="#handleDetails" />
+    </HBox>
+</VBox>

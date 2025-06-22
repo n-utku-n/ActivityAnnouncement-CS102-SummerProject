@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.EventDetailController"
+            style="-fx-padding: 20;">
+
+    <!-- Üstte etkinlik adı ve posteri -->
+    <top>
+        <VBox spacing="10">
+            <Label fx:id="eventNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+            <ImageView fx:id="eventImage" fitWidth="400" fitHeight="200" preserveRatio="true"/>
+        </VBox>
+    </top>
+
+    <!-- Ortada detaylı bilgiler -->
+    <center>
+        <HBox spacing="20">
+
+            <!-- Sol: Kulüp kartı -->
+            <VBox fx:id="clubCardPlaceholder" />
+
+            <!-- Sağ: Etkinlik detayları -->
+            <VBox spacing="15" style="-fx-padding: 10;">
+                <Label text="Description" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <TextArea fx:id="descriptionArea" editable="false" wrapText="true" prefRowCount="3"/>
+
+                <Label text="Rules" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <TextArea fx:id="rulesArea" editable="false" wrapText="true" prefRowCount="3"/>
+
+                <Label fx:id="participantInfoLabel" />
+            </VBox>
+
+        </HBox>
+    </center>
+
+
+    <!-- Sol: Kulüp kartı -->
+    <left>
+        <VBox fx:id="clubCardPlaceholder" />
+    </left>
+
+    <!-- Sağ: Geri dön -->
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="⬅ Back" onAction="#handleBack" />
+        </HBox>
+    </bottom>
+</BorderPane>

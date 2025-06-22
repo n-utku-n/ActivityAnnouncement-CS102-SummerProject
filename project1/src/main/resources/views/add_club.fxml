@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.AddClubController">
+
+    <center>
+        <VBox spacing="15" alignment="CENTER" style="-fx-padding: 30;">
+
+            <Label text="Add New Club" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+
+            <TextField fx:id="clubNameField" promptText="Club Name" />
+            <TextArea fx:id="descriptionArea" promptText="Club Description" prefRowCount="4" />
+            <DatePicker fx:id="foundationDatePicker" promptText="Foundation Date" />
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Select Logo (PNG)" onAction="#handleSelectLogo" />
+                <Label fx:id="logoFileNameLabel" text="No file selected" />
+            </HBox>
+
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="🔙 Back" onAction="#handleBackButton" />
+                <Button text="✅ Create Club" onAction="#handleCreateClub" />
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project1.ClubCardController"
+      spacing="15" alignment="CENTER_LEFT"
+      style="-fx-padding: 10; -fx-border-color: lightgray; -fx-background-color: white;">
+
+    <!-- Kulüp Logosu -->
+    <ImageView fx:id="clubLogo" fitWidth="60" fitHeight="60" />
+
+    <!-- Kulüp Bilgileri -->
+    <VBox spacing="5">
+        <Label fx:id="clubNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <Label fx:id="eventCountLabel" />
+        <Label fx:id="participantCountLabel" />
+        <Label fx:id="managerCountLabel" />
+    </VBox>
+
+    <!-- Boşluk bırak -->
+    <Pane HBox.hgrow="ALWAYS"/>
+
+    <!-- Detay butonu (Sayfaya yönlendirir) -->
+    <Button text="📄 View" onAction="#handleView"/>
+</HBox>

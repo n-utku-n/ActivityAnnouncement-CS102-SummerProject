@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="eventCardRoot"
+      prefWidth="400"
+      spacing="0"
+      stylesheets="@../style/event_card.css"
+      styleClass="event-card"
+      onMouseClicked="#onCardClicked">
+
+    <ImageView fx:id="eventImage"
+               fitWidth="400"
+               fitHeight="180"
+               pickOnBounds="true"
+               preserveRatio="false"
+               styleClass="event-image">
+        <image>
+            <Image url="@../assets/event-placeholder.png"/>
+        </image>
+        <clip>
+            <Rectangle width="400" height="180" arcWidth="40" arcHeight="40"/>
+        </clip>
+    </ImageView>
+
+    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="event-card-content">
+        <padding>
+            <Insets top="10" right="16" bottom="16" left="16"/>
+        </padding>
+
+        <StackPane styleClass="logo-container" prefWidth="60" prefHeight="60">
+            <ImageView fx:id="eventLogo"
+                       fitWidth="60"
+                       fitHeight="60"
+                       pickOnBounds="true"
+                       preserveRatio="true">
+                <image>
+                    <Image url="@../assets/lg.png"/>
+                </image>
+                <clip>
+                    <Circle radius="30" centerX="30" centerY="30"/>
+                </clip>
+            </ImageView>
+        </StackPane>
+
+        <VBox spacing="4" alignment="TOP_LEFT" prefWidth="600">
+            <Text fx:id="eventName" text="Event Title" styleClass="event-title"/>
+
+            <HBox spacing="0" alignment="CENTER_LEFT" style="-fx-padding: 0 0 0 2;">
+                <ProgressBar fx:id="participantBar" progress="0.6" prefWidth="250" prefHeight="14" styleClass="participant-bar"/>
+                <StackPane prefWidth="3" prefHeight="14" alignment="CENTER">
+                    <Rectangle fx:id="minParticipantLine" width="3" height="14" fill="#B91C1C" />
+                </StackPane>
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox>

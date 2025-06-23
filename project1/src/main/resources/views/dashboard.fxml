@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="your.package.DashboardController"
+            prefWidth="900" prefHeight="600"
+            stylesheets="@../style/dashboard.css"
+            style="-fx-background-color: #FAFAFA;">
+
+    <HBox fx:id="topBar" layoutX="0" layoutY="0" prefWidth="900" prefHeight="100"
+          spacing="20" alignment="CENTER_LEFT"
+          style="-fx-background-color: #FAFAFA;">
+        <padding>
+            <Insets top="15" right="30" bottom="15" left="30"/>
+        </padding>
+
+        <AnchorPane prefWidth="80" prefHeight="80">
+            <ImageView fx:id="logoImage" fitWidth="80" fitHeight="80" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../assets/newLogo.png"/>
+                </image>
+                <clip>
+                    <Circle radius="40" centerX="40" centerY="40"/>
+                </clip>
+            </ImageView>
+        </AnchorPane>
+
+        <VBox alignment="CENTER_LEFT">
+            <Text text="BILCALL" styleClass="title-text"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <HBox fx:id="navButtonsContainer" spacing="40" alignment="CENTER_LEFT">
+            <Button fx:id="contactsButton" text="Contacts" styleClass="link-button"/>
+
+            <Button fx:id="campaignsButton"
+                    text="Campaigns"
+                    styleClass="link-button"
+                    onAction="#toggleCampaignsMenu"/>
+        </HBox>
+
+        <VBox alignment="CENTER" spacing="5">
+            <AnchorPane prefWidth="50" prefHeight="50">
+                <ImageView fx:id="profileImage" fitWidth="50" fitHeight="50" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../assets/profile.png"/>
+                    </image>
+                    <clip>
+                        <Circle radius="25" centerX="25" centerY="25"/>
+                    </clip>
+                </ImageView>
+            </AnchorPane>
+            <Text fx:id="userRoleLabel"
+                  text="Student"
+                  styleClass="profile-text"
+                  onMouseClicked="#openProfileWindow"/>
+        </VBox>
+    </HBox>
+
+    <Separator layoutX="30" layoutY="100" prefWidth="840"
+               style="-fx-background-color: #666666; -fx-border-color: #666666;"/>
+
+    <VBox fx:id="campaignsMenu"
+          visible="false" managed="false"
+          layoutX="720" layoutY="100"
+          prefWidth="160"
+          spacing="0"
+          style="-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2); -fx-padding: 8;">
+        <Button text="Top Campaigns"
+                styleClass="campaign-menu-item"
+                onAction="#onTopCampaignsClicked"
+                style="-fx-padding: 8 12; -fx-background-color: transparent; -fx-alignment: CENTER_LEFT;"/>
+        <Separator styleClass="campaign-menu-separator"/>
+        <Button text="Recent Campaigns"
+                styleClass="campaign-menu-item"
+                onAction="#onRecentCampaignsClicked"
+                style="-fx-padding: 8 12; -fx-background-color: transparent; -fx-alignment: CENTER_LEFT;"/>
+        <Separator styleClass="campaign-menu-separator"/>
+        <Button text="Upcoming Campaigns"
+                styleClass="campaign-menu-item"
+                onAction="#onUpcomingCampaignsClicked"
+                style="-fx-padding: 8 12; -fx-background-color: transparent; -fx-alignment: CENTER_LEFT;"/>
+    </VBox>
+
+    <AnchorPane layoutY="100" prefHeight="20" prefWidth="900" style="-fx-background-color: #FAFAFA;"/>
+
+    <HBox layoutX="30" layoutY="120" prefWidth="840" spacing="10"
+          alignment="CENTER_LEFT"
+          style="-fx-background-color:#FAFAFA; -fx-background-radius:8px;">
+        <padding>
+            <Insets top="10" right="15" bottom="10" left="15"/>
+        </padding>
+
+        <TextField fx:id="searchField" promptText="Search..." styleClass="text-field" HBox.hgrow="ALWAYS"/>
+        <Button text="Search" styleClass="button"/>
+    </HBox>
+
+    <VBox fx:id="eventListContainer" layoutX="30" layoutY="180" prefWidth="840" spacing="20"/>
+
+</AnchorPane>

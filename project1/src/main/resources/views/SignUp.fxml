@@ -14,7 +14,8 @@
             stylesheets="@../style/signup.css"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="SignupController">
+            fx:controller="com.project1.SignUpController">
+            <!-- düzeltildi -by Utku-: welcome.fxml de bahsettiğim hatanın aynısı-->
 
     <VBox alignment="CENTER" layoutX="50.0" layoutY="30.0" spacing="15.0">
 
@@ -32,12 +33,15 @@
         <TextField fx:id="surnameField" promptText="Surname" />
         <TextField fx:id="emailField" promptText="Mail" />
         <PasswordField fx:id="passwordField" promptText="Password" />
-        <PasswordField fx:id="rePasswordField" promptText="Re-Password" />
-        <TextField fx:id="studentIdField" promptText="Student ID" />
-
+        
+        <TextField fx:id="idField" promptText="Student ID" />
+        <!-- düzeltildi -by Utku-: IDField olmalı tanımladığım değişkenden farklı isim olursa null exception verir ayrıca repassword istenirse ekleyebilirim ama bence gerek yok diye çıkardım-->
+        <!--<PasswordField fx:id="rePasswordField" promptText="Re-Password" /-->
+        
         <Label fx:id="errorLabel" text="Passwords do not match!" textFill="red" visible="false" />
 
-        <Button fx:id="signUpButton" text="Sign Up" />
+        <Button fx:id="signUpButton" text="Sign Up" onAction="#handleSignUp" />
+        <!-- düzeltildi -by Utku-: fonksiyonel olması için handlesignup eklendi-->
 
     </VBox>
 </AnchorPane>

@@ -20,7 +20,8 @@ public class App extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Entry.fxml"));
+        //updated according to changes in welcome screen
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/welcome.fxml"));
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("BilCall");
         primaryStage.setScene(scene);

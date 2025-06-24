@@ -59,3 +59,8 @@ ImageView {
     -fx-underline: true;
     -fx-padding: 10 0 0 0;
 }
+
+#errorLabel {
+    -fx-font-size: 13px;
+    -fx-text-fill: red;
+}

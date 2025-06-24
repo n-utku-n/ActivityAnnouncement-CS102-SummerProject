@@ -13,7 +13,8 @@
             stylesheets="@../style/welcome.css"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="WelcomeController">
+            fx:controller="com.project1.WelcomeController"> 
+            <!--düzeltildi -by Utku-: sadece class adı yazıyorsa hata alırız paketAdı.ClassAdı olmalı  -->
 
 
     <VBox alignment="CENTER" layoutX="50.0" layoutY="40.0" spacing="10.0">

@@ -9,12 +9,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Label?>
 
 <AnchorPane prefHeight="400.0" prefWidth="400.0"
             stylesheets="@../style/signin.css"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/23.0.1"
-            fx:controller="SigninController">
+            fx:controller="com.project1.SignInController">
+            <!-- düzeltildi -by Utku-: welcome.fxml de bahsettiğim hatanın aynısı-->
+
 
     <VBox alignment="CENTER" layoutX="50.0" layoutY="50.0" spacing="15.0">
 
@@ -30,9 +33,14 @@
         <TextField fx:id="emailField" promptText="Mail" />
         <PasswordField fx:id="passwordField" promptText="Password" />
 
-        <Button fx:id="signInButton" text="Sign In" />
+        <Button fx:id="signInButton" text="Sign In" onAction="#handleSignIn" />
+        <!--düzeltme -by Utku-: handleSignIn eklendi tuşun fonksiyonel olması için-->
 
-      <Button fx:id="forgotPasswordLink" text="Forgot Your Password?" styleClass="forgot-password" style="-fx-background-color: transparent; -fx-text-fill: #3b82f6; -fx-underline: true;" />
+      <Button fx:id="forgotPasswordLink" text="Forgot Your Password?" styleClass="forgot-password" style="-fx-background-color: transparent; -fx-text-fill: #3b82f6; -fx-underline: true;" onAction="#handleForgotPassword" />
+        <!--düzeltme -byUtku-:handleSignIn eklendi artık forgot_password sayfasına yönlendiriyor-->
+        
+        <Label fx:id="errorLabel" text="" style="-fx-text-fill: red;" />
+        <!--düzeltme -byUtku-: controllerda mevcut olan errorLabel'ı null döndürmemesi için eklememiz gerekiyor-->
 
     </VBox>
 </AnchorPane>

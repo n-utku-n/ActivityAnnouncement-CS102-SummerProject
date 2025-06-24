@@ -38,7 +38,13 @@ public class SignInController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    private void handleForgotPassword(ActionEvent event) {
+        SceneChanger.switchScene(event, "forgot_password.fxml");
+    }
+
     private static final String API_KEY = "AIzaSyDYluEpPgovtKRDW5bjIMMg4BNLgjy52YM";
+    
 
      /**
      * Handles sign-in button click.

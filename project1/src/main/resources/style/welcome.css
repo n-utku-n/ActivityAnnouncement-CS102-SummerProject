@@ -1,0 +1,48 @@
+.root {
+    -fx-background-color: #FAFAFA;
+    -fx-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.title-text {
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+    -fx-fill: #1E3A8A;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 2, 0, 0, 1);
+}
+
+.slogan-text {
+    -fx-font-size: 20px;
+    -fx-fill: #374151;
+    -fx-font-weight: 600;
+}
+
+ImageView {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 4);
+    -fx-cursor: default;
+}
+
+.button {
+    -fx-background-color: #3B82F6;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 24px;
+    -fx-padding: 12px 32px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2);
+    -fx-transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.button:hover {
+    -fx-background-color: #2563EB;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 7, 0, 0, 3);
+}
+
+.button:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+}
+
+HBox {
+    -fx-padding: 0 40 0 40;
+}

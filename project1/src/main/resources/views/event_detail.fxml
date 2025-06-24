@@ -1,53 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.project1.EventDetailController"
-            style="-fx-padding: 20;">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           xmlns="http://javafx.com/javafx/23.0.1"
+           fx:controller="your.package.EventDetailController"
+           stylesheets="@../style/event_detail.css"
+           prefWidth="900" prefHeight="600">
 
-    <!-- Üstte etkinlik adı ve posteri -->
-    <top>
-        <VBox spacing="10">
-            <Label fx:id="eventNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-            <ImageView fx:id="eventImage" fitWidth="400" fitHeight="200" preserveRatio="true"/>
+    <VBox spacing="20" alignment="TOP_CENTER" maxWidth="840">
+
+        <HBox alignment="CENTER_LEFT">
+            <Button fx:id="backButton"
+                    text="← Back"
+                    onAction="#onBackClicked"
+                    styleClass="button"/>
+        </HBox>
+
+        <StackPane styleClass="framed-box">
+            <ImageView fx:id="eventImage"
+                       fitWidth="840" fitHeight="250"
+                       pickOnBounds="true" preserveRatio="false">
+                <image>
+                    <Image url="@../assets/event-placeholder.png"/>
+                </image>
+                <clip>
+                    <Rectangle width="840" height="250" arcWidth="30" arcHeight="30"/>
+                </clip>
+            </ImageView>
+        </StackPane>
+
+        <VBox spacing="10" styleClass="framed-box" prefWidth="840">
+            <Text fx:id="eventName"
+                  text="Event Title"
+                  styleClass="event-title"
+                  wrappingWidth="808"/>
         </VBox>
-    </top>
 
-    <!-- Ortada detaylı bilgiler -->
-    <center>
-        <HBox spacing="20">
+        <VBox spacing="10" styleClass="framed-box" prefHeight="150" prefWidth="840">
+            <ScrollPane prefHeight="150" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="scroll-pane">
+                <VBox style="-fx-background-color: white;">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
 
-            <!-- Sol: Kulüp kartı -->
-            <VBox fx:id="clubCardPlaceholder" />
+                    <Text fx:id="eventDescription"
+                          wrappingWidth="808"
+                          text="Description"/>
+                </VBox>
+            </ScrollPane>
+        </VBox>
 
-            <!-- Sağ: Etkinlik detayları -->
-            <VBox spacing="15" style="-fx-padding: 10;">
-                <Label text="Description" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                <TextArea fx:id="descriptionArea" editable="false" wrapText="true" prefRowCount="3"/>
+        <Button fx:id="joinButton"
+                text="Join"
+                styleClass="join-button"
+                onAction="#onJoinClicked">
+            <VBox.margin>
+                <Insets bottom="30"/>
+            </VBox.margin>
+        </Button>
 
-                <Label text="Rules" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                <TextArea fx:id="rulesArea" editable="false" wrapText="true" prefRowCount="3"/>
+    </VBox>
 
-                <Label fx:id="participantInfoLabel" />
-            </VBox>
-
-        </HBox>
-    </center>
-
-
-    <!-- Sol: Kulüp kartı -->
-    <left>
-        <VBox fx:id="clubCardPlaceholder" />
-    </left>
-
-    <!-- Sağ: Geri dön -->
-    <bottom>
-        <HBox alignment="CENTER_RIGHT">
-            <Button text="⬅ Back" onAction="#handleBack" />
-        </HBox>
-    </bottom>
-</BorderPane>
+</StackPane>

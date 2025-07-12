@@ -1,0 +1,93 @@
+#logoImage {
+    -fx-cursor: hand;
+}
+
+#profileImage {
+    -fx-cursor: hand;
+}
+
+#userRoleLabel {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #374151;
+}
+
+#userRoleLabel:hover {
+    -fx-text-fill: #2563EB;
+    -fx-underline: true;
+}
+
+.title-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-fill: #1E3A8A;
+    -fx-text-fill: #1E3A8A; 
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 2, 0, 0, 1);
+}
+
+#searchField {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #374151;
+    -fx-prompt-text-fill: #9CA3AF;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 2, 0, 0, 1);
+}
+
+#roleFilterComboBox {
+    -fx-font-size: 14px;
+    -fx-pref-width: 140px;
+}
+
+#refreshButton {
+    -fx-background-color: #3B82F6;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+#refreshButton:hover {
+    -fx-background-color: #2563EB;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 2);
+}
+
+#addClubButton {
+    -fx-background-color: #3B82F6;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+    -fx-cursor: hand;
+}
+
+#addClubButton:hover {
+    -fx-background-color: #2563EB;
+}
+
+#titleText {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1E3A8A;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 2, 0, 0, 1);
+}
+
+#roleFilterComboBox {
+    -fx-pref-width: 180px;
+    -fx-min-width: 180px;
+    -fx-max-width: 300px;
+    -fx-background-color: #F3F4F6;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-padding: 6px 12px;
+    -fx-text-fill: #374151;
+}

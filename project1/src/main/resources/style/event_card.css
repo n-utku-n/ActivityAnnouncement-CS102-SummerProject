@@ -1,0 +1,54 @@
+.event-card {
+  -fx-background-color: white;
+  -fx-background-radius: 12;
+  -fx-border-color: black;
+  -fx-border-radius: 12;
+  -fx-border-width: 0.5px;
+  -fx-pref-width: 375px;
+  -fx-min-width: 375px;
+  -fx-max-width: 375px;
+  -fx-pref-height: 260px;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 1);
+}
+.photo-wrapper {
+  -fx-pref-width: 355px;
+  -fx-pref-height: 200px;
+  -fx-alignment: center;
+  -fx-padding: 8px 0 0 0;
+}
+.photo-bg {
+  -fx-fill: transparent;
+  -fx-stroke: black;
+  -fx-stroke-width: 0.5px;
+  -fx-width: 355px;
+  -fx-height: 200px;
+  -fx-arc-width: 16;
+  -fx-arc-height: 16;
+}
+.event-image {
+  /* FXML fitWidth/fitHeight kullanır */
+}
+.event-card-content {
+  -fx-alignment: center-left;
+}
+.logo-wrapper {
+  -fx-alignment: center;
+  -fx-pref-width: 40px;
+  -fx-pref-height: 40px;
+}
+.logo-bg {
+  -fx-fill: white;
+  -fx-stroke: #ccc;
+  -fx-stroke-width: 1px;
+}
+.club-logo {
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+.event-title { -fx-font-size: 14px; -fx-text-fill: #111; }
+.club-name   { -fx-font-size: 12px; -fx-text-fill: #333; -fx-font-style: italic; }
+.event-date  { -fx-font-size: 10px; -fx-text-fill: #666; -fx-font-style: italic; }
+.progress-container { -fx-pref-width: 180px; -fx-pref-height: 12px; }
+.participant-bar { -fx-pref-width: 180px; -fx-pref-height: 12px; -fx-background-radius: 6; -fx-accent: #3B5BA5; }
+.min-participant-line { -fx-fill: #E63946; }
+.participant-number,
+.participant-slash { -fx-font-size: 10px; -fx-text-fill: #111; -fx-padding: 0 4 0 4; -fx-font-style: italic; }

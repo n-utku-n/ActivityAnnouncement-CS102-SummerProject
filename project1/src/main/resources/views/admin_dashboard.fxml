@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="your.package.AdminDashboardController"
+            prefWidth="900" prefHeight="600"
+            stylesheets="@../style/admin_dashboard.css"
+            style="-fx-background-color: #FAFAFA;">
+
+    <!-- Top Bar -->
+    <HBox layoutX="0" layoutY="0" prefWidth="900" prefHeight="100"
+          spacing="20" alignment="CENTER_LEFT"
+          style="-fx-background-color: #FAFAFA;">
+        <padding>
+            <Insets top="15" right="30" bottom="15" left="30"/>
+        </padding>
+
+        <!-- Logo -->
+        <ImageView fx:id="logoImage" fitWidth="80" fitHeight="80" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/newLogo.png"/>
+            </image>
+            <clip>
+                <Circle radius="40" centerX="40" centerY="40"/>
+            </clip>
+        </ImageView>
+
+        <!-- BILCALL -->
+        <Text fx:id="titleText" text="BILCALL" styleClass="title-text"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Profile -->
+        <VBox alignment="CENTER" spacing="5" onMouseClicked="#openAdminProfile">
+            <ImageView fx:id="profileImage" fitWidth="50" fitHeight="50" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../assets/profile.png"/>
+                </image>
+                <clip>
+                    <Circle radius="25" centerX="25" centerY="25"/>
+                </clip>
+            </ImageView>
+            <Text fx:id="userRoleLabel" text="Admin" />
+        </VBox>
+    </HBox>
+
+    <Separator layoutX="30" layoutY="100" prefWidth="840"/>
+
+    <!-- Search and filter -->
+    <HBox layoutX="30" layoutY="120" prefWidth="840" spacing="10"
+          alignment="CENTER_LEFT"
+          style="-fx-background-color:#FAFAFA; -fx-background-radius:8px;">
+        <padding>
+            <Insets top="10" right="15" bottom="10" left="15"/>
+        </padding>
+
+        <TextField fx:id="searchField" promptText="Search users" HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="roleFilterComboBox" promptText="Filter by role" prefWidth="180"/>
+        <Button fx:id="refreshButton" text="Refresh" onAction="#onRefreshClicked"/>
+    </HBox>
+
+    <!-- Main Content Section -->
+    <VBox layoutX="30" layoutY="180" prefWidth="840" spacing="30">
+
+        <!-- Clubs -->
+        <VBox fx:id="clubsSection" spacing="10" prefWidth="840"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8;">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Text text="Clubs" />
+                <Button fx:id="addClubButton" text="Add Club" onAction="#onAddClubClicked"/>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="false" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                        style="-fx-background-color: transparent;" prefHeight="140">
+                <HBox fx:id="clubsListContainer" spacing="10">
+                    <padding>
+                        <Insets top="10" bottom="10" left="10" right="10"/>
+                    </padding>
+                </HBox>
+            </ScrollPane>
+        </VBox>
+
+        <!-- All Users -->
+        <VBox fx:id="allUsersSection" spacing="10" prefWidth="840"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8;">
+            <Text text="All Users" />
+            <ScrollPane fitToHeight="true" fitToWidth="false" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                        style="-fx-background-color: transparent;" prefHeight="140">
+                <HBox fx:id="allUsersListContainer" spacing="10">
+                    <padding>
+                        <Insets top="10" bottom="10" left="10" right="10"/>
+                    </padding>
+                </HBox>
+            </ScrollPane>
+        </VBox>
+
+        <!-- All Events -->
+        <VBox fx:id="allEventsSection" spacing="10" prefWidth="840"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8;">
+            <Text text="All Events" />
+            <ScrollPane fitToHeight="true" fitToWidth="false" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                        style="-fx-background-color: transparent;" prefHeight="140">
+                <HBox fx:id="allEventsListContainer" spacing="10">
+                    <padding>
+                        <Insets top="10" bottom="10" left="10" right="10"/>
+                    </padding>
+                </HBox>
+            </ScrollPane>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>

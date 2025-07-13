@@ -1,0 +1,33 @@
+# === Firebase ===
+# Firebase servis hesabı anahtarı – kesinlikle Git'e eklenmemeli!
+src/main/resources/firebase/serviceAccountKey.json
+
+# === Maven ===
+# Maven derleme çıktısı
+target/
+*.class
+
+# === Java IDE Ayarları ===
+# IntelliJ IDEA ve VS Code gibi editörler için
+.vscode/
+.idea/
+*.iml
+
+# === Sistem Dosyaları ===
+.DS_Store
+Thumbs.db
+
+# === Log Dosyaları ve Geçici Çıktılar ===
+*.log
+*.tmp
+*.swp
+
+# === Test ve Hata Kayıtları ===
+*.pid
+*.hprof
+
+# === Paket Arşivleri (Opsiyonel, eğer jar/war dışa aktarmıyorsan) ===
+*.jar
+*.war
+*.zip
+*.tar.gz

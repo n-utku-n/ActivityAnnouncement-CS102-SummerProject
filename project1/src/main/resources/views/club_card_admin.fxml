@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.ClubCardAdminController"
+            prefHeight="180" prefWidth="600"
+            style="-fx-border-color: lightgray; -fx-background-color: white; -fx-padding: 15; -fx-border-radius: 8;">
+    
+    <HBox spacing="20" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        
+        <!-- Logo -->
+        <ImageView fx:id="clubLogo"
+           fitHeight="120"
+           fitWidth="120"
+           preserveRatio="false" />
+
+        <!-- Info -->
+        <VBox spacing="5">
+            <Label fx:id="clubNameLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+            <Label fx:id="eventCountLabel" />
+            <Label fx:id="participantCountLabel" />
+            <Label fx:id="managerCountLabel" />
+        </VBox>
+
+        <!-- Spacer -->
+        <Pane HBox.hgrow="ALWAYS"/>
+
+        <!-- Action Buttons -->
+        <VBox spacing="8" alignment="TOP_RIGHT">
+            <Button fx:id="viewButton" text="📄 View" onAction="#handleView" />
+            <Button fx:id="deleteButton" text="🗑 Delete" onAction="#handleDelete"
+                    style="-fx-background-color: #ff4d4d; -fx-text-fill: white;" />
+        </VBox>
+    </HBox>
+</AnchorPane>

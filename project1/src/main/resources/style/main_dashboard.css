@@ -1,0 +1,131 @@
+/* menu-bar */
+.menu-bar {
+  -fx-background-color: white;
+  -fx-border-color: #ddd;
+  -fx-border-width: 0 0 1 0;
+  -fx-padding: 0 20;
+}
+
+/* logo */
+.logo-image {
+  -fx-opacity: 1;
+}
+
+/* BilCall başlık için kapsayıcı */
+.title-label {
+  /* logoyla arasında boşluk bırakmak için */
+  -fx-padding: 0 20 0 10;
+}
+
+/* Başlık metinleri */
+.title-blue {
+  -fx-fill: #3B5BA5;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+}
+.title-red {
+  -fx-fill: #E63946;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+}
+
+/* Menü öğeleri */
+.menu-item {
+  -fx-font-size: 14px;
+  -fx-text-fill: #333;
+  -fx-cursor: hand;
+  -fx-padding: 0 12;
+}
+.menu-item:hover {
+  -fx-underline: true;
+}
+
+/* Profil butonu */
+.profile-button {
+  -fx-background-color: #3B5BA5;
+  -fx-text-fill: white;
+  -fx-background-radius: 4;
+  -fx-padding: 6 12;
+}
+
+/* Ortadaki container */
+.center-content {
+  -fx-background-color: transparent;
+  -fx-padding: 20;
+}
+
+/* Başlıklar */
+.welcome-label {
+  -fx-font-size: 18px;
+  -fx-text-fill: #111;
+}
+.section-label {
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #111;
+}
+
+/* Search bar */
+.search-bar {
+  -fx-padding: 0 0 16 0;
+}
+.search-bar .text-field {
+  -fx-background-radius: 4;
+  -fx-border-radius: 4;
+  -fx-border-color: #ccc;
+  -fx-padding: 4 8;
+}
+.search-button {
+  -fx-background-color: #3B5BA5;
+  -fx-text-fill: white;
+  -fx-background-radius: 4;
+  -fx-padding: 4 8;
+}
+
+/* Genel pencere arkaplanı */
+.root {
+  -fx-background-color: #f0f2f5;
+}
+
+/* FlowPane içi */
+.event-flowpane {
+  -fx-background-color: white;
+  -fx-padding: 40 40 40 40;
+  -fx-hgap: 80;
+  -fx-vgap: 24;
+  -fx-border-color: lightgray;
+  -fx-border-width: 1;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+}
+
+/* ScrollPane’i tamamen şeffaf yap */
+.events-scroll {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-padding: 0;
+}
+.events-scroll .viewport {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+}
+.events-scroll .content {
+  -fx-background-color: transparent;
+}
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+  -fx-background-color: transparent;
+  -fx-padding: 0;
+  -fx-background-insets: 0;
+}
+.app-logo {
+  -fx-padding: 0 20 0 10; /* sağa 20, sola 10px boşluk */
+}
+
+.logo-image {
+  -fx-stroke: #ddd;
+  -fx-stroke-width: 1;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
+}

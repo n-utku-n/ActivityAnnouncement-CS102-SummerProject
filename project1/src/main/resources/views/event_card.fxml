@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project1.EventCardController"
+      fx:id="eventCardRoot"
+      styleClass="event-card"
+      stylesheets="@../style/event_card.css"
+      prefWidth="375"
+      prefHeight="260"
+      minWidth="375"
+      maxWidth="375">
+
+  <!-- 1) Üstte oval kenarlı foto -->
+  <StackPane alignment="CENTER" styleClass="photo-wrapper">
+    <Rectangle styleClass="photo-bg"
+               arcWidth="16" arcHeight="16"/>
+    <ImageView fx:id="eventImage"
+               fitWidth="355"
+               fitHeight="200"
+               preserveRatio="false"
+               smooth="true"
+               styleClass="event-image">
+      <clip>
+        <Rectangle width="355" height="200" arcWidth="16" arcHeight="16"/>
+      </clip>
+    </ImageView>
+  </StackPane>
+
+  <!-- 2) Alt içerik -->
+  <HBox spacing="12" styleClass="event-card-content">
+    <padding>
+      <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+
+    <!-- Logo -->
+    <StackPane styleClass="logo-wrapper">
+      <Circle styleClass="logo-bg" radius="20"/>
+      <ImageView fx:id="clubLogo"
+                 fitWidth="40" fitHeight="40"
+                 preserveRatio="true"
+                 styleClass="club-logo">
+        <clip>
+          <Circle radius="20" centerX="20" centerY="20"/>
+        </clip>
+      </ImageView>
+    </StackPane>
+
+    <!-- Metin + Bar -->
+    <VBox spacing="6" HBox.hgrow="ALWAYS">
+      <Label fx:id="eventName"     styleClass="event-title"/>
+      <Label fx:id="clubName"      styleClass="club-name"/>
+      <Label fx:id="eventDateText" styleClass="event-date"/>
+
+      <HBox spacing="8" alignment="CENTER_LEFT">
+        <StackPane styleClass="progress-container">
+          <ProgressBar fx:id="participantBar" styleClass="participant-bar"/>
+          <Rectangle fx:id="minParticipantLine"
+                     width="2" height="12"
+                     styleClass="min-participant-line"/>
+        </StackPane>
+        <Label fx:id="currentParticipantsText" styleClass="participant-number"/>
+        <Label text="/"                             styleClass="participant-slash"/>
+        <Label fx:id="maxParticipantsText"     styleClass="participant-number"/>
+      </HBox>
+    </VBox>
+  </HBox>
+</VBox>

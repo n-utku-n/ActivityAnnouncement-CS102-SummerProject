@@ -2,71 +2,117 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Text?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           xmlns="http://javafx.com/javafx/23.0.1"
-           fx:controller="your.package.EventDetailController"
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.project1.EventDetailController"
            stylesheets="@../style/event_detail.css"
-           prefWidth="900" prefHeight="600">
+           prefWidth="900" prefHeight="600"
+           alignment="CENTER">
 
-    <VBox spacing="20" alignment="TOP_CENTER" maxWidth="840">
+  <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+              style="-fx-background: transparent; -fx-border-color: transparent;">
+    <content>
+      <StackPane alignment="TOP_CENTER">
+        <padding>
+          <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        <VBox spacing="20" alignment="CENTER" maxWidth="840">
+    <!-- Geri butonu -->
+    <HBox alignment="CENTER_LEFT">
+      <Button fx:id="backButton"
+              text="Back"
+              onAction="#handleBack"
+              styleClass="back-button"/>
+    </HBox>
 
-        <HBox alignment="CENTER_LEFT">
-            <Button fx:id="backButton"
-                    text="← Back"
-                    onAction="#onBackClicked"
-                    styleClass="button"/>
-        </HBox>
+    <!-- Poster -->
+    <StackPane styleClass="framed-box">
+      <ImageView fx:id="eventImage"
+                 fitWidth="840"
+                 preserveRatio="true"
+                 pickOnBounds="true">
+        <image>
+          <Image url="@../assets/event-placeholder.png"/>
+        </image>
+        <clip>
+          <Rectangle width="840" height="473" arcWidth="30" arcHeight="30"/>
+        </clip>
+      </ImageView>
+    </StackPane>
 
-        <StackPane styleClass="framed-box">
-            <ImageView fx:id="eventImage"
-                       fitWidth="840" fitHeight="250"
-                       pickOnBounds="true" preserveRatio="false">
-                <image>
-                    <Image url="@../assets/event-placeholder.png"/>
-                </image>
-                <clip>
-                    <Rectangle width="840" height="250" arcWidth="30" arcHeight="30"/>
-                </clip>
-            </ImageView>
-        </StackPane>
-
-        <VBox spacing="10" styleClass="framed-box" prefWidth="840">
-            <Text fx:id="eventName"
-                  text="Event Title"
-                  styleClass="event-title"
-                  wrappingWidth="808"/>
-        </VBox>
-
-        <VBox spacing="10" styleClass="framed-box" prefHeight="150" prefWidth="840">
-            <ScrollPane prefHeight="150" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="scroll-pane">
-                <VBox style="-fx-background-color: white;">
-                    <padding>
-                        <Insets top="10" right="10" bottom="10" left="10"/>
-                    </padding>
-
-                    <Text fx:id="eventDescription"
-                          wrappingWidth="808"
-                          text="Description"/>
-                </VBox>
-            </ScrollPane>
-        </VBox>
-
-        <Button fx:id="joinButton"
-                text="Join"
-                styleClass="join-button"
-                onAction="#onJoinClicked">
-            <VBox.margin>
-                <Insets bottom="30"/>
-            </VBox.margin>
-        </Button>
-
+    <!-- Başlık -->
+    <VBox spacing="10" styleClass="framed-box" prefWidth="840" prefHeight="60">
+      <Label fx:id="eventNameLabel"
+             text="Event Title"
+             styleClass="event-title"
+             wrapText="true"
+             maxWidth="808"/>
     </VBox>
 
+    <!-- Katılımcı bilgisi -->
+    <VBox spacing="10" styleClass="framed-box" prefWidth="840" prefHeight="60">
+      <Label fx:id="participantInfoLabel"
+             text="Participants"
+             styleClass="participant-info"/>
+      <StackPane fx:id="participantProgressContainer" prefWidth="808" alignment="CENTER_LEFT">
+        <ProgressBar fx:id="participantBar" prefWidth="808"/>
+        <Rectangle fx:id="minParticipantLine"
+                   width="2" height="16"
+                   translateX="0"
+                   style="-fx-fill: #E63946;"/>
+      </StackPane>
+    </VBox>
+
+    <!-- Açıklama -->
+    <VBox spacing="10" styleClass="framed-box" prefWidth="840">
+      <Label fx:id="descriptionLabel"
+             wrapText="true"
+             text="Description goes here"
+             maxWidth="788"
+             style="-fx-padding: 10; -fx-background-color: white;"/>
+    </VBox>
+
+    <!-- Kurallar -->
+    <VBox spacing="10" styleClass="framed-box" prefWidth="840">
+      <Label fx:id="rulesLabel"
+             wrapText="true"
+             text="Rules go here"
+             maxWidth="788"
+             style="-fx-padding: 10; -fx-background-color: white;"/>
+    </VBox>
+
+    <!-- Club Card Placeholder -->
+    <VBox fx:id="clubCardPlaceholder"
+          spacing="10"
+          styleClass="framed-box"
+          prefWidth="840"
+          prefHeight="200">
+      <!-- Club card will be injected here -->
+      <!-- After injection, ensure controller clips clubLogo to a circle: -->
+    </VBox>
+
+    <!-- Katıl butonu (henüz handler eklemediysen onAction’ı kaldırdım) -->
+    <HBox alignment="CENTER">
+      <Button fx:id="joinButton"
+              text="Join"
+              styleClass="join-button">
+        <VBox.margin>
+          <Insets bottom="30"/>
+        </VBox.margin>
+      </Button>
+    </HBox>
+        </VBox>
+      </StackPane>
+    </content>
+  </ScrollPane>
 </StackPane>

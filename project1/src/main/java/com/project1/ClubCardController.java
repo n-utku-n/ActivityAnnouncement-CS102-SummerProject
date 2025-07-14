@@ -54,9 +54,22 @@ public class ClubCardController {
         this.clubName = (String) data.get("name");
 
         clubNameLabel.setText(clubName);
-        eventCountLabel.setText("Active Events: 0"); // Gelecekte güncellenecek
+        // Set active event count from data map
+        Object activeObj = data.get("activeEventCount");
+        int activeCount = activeObj instanceof Number ? ((Number) activeObj).intValue() : 0;
+        eventCountLabel.setText("Active Events: " + activeCount);
         participantCountLabel.setText("Participants: 0"); // Gelecekte güncellenecek
-        managerCountLabel.setText("Managers: " + ((java.util.List<?>) data.get("managers")).size());
+        // Set manager name from nested map
+        String managerName = "Unknown Manager";
+        Object mgrObj = data.get("managers");
+        if (mgrObj instanceof Map) {
+            Map<?,?> mgrMap = (Map<?,?>) mgrObj;
+            Object nameField = mgrMap.get("name");
+            if (nameField instanceof String) {
+                managerName = (String) nameField;
+            }
+        }
+        managerCountLabel.setText("Manager: " + managerName);
 
         try {
             String logoUrl = (String) data.get("logoUrl");

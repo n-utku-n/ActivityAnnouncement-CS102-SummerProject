@@ -93,10 +93,9 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
      * Event card loading whether based on clicked or not
      * @author Serra
      */
-    @FXML
+   @FXML
     private void onCardClicked(MouseEvent event) {
         System.out.println("📦 Event card clicked!");
-        // Navigate to event detail page
         if (eventId != null && eventData != null) {
             navigateToEventDetail();
         }
@@ -444,24 +443,29 @@ private void populateParticipantInfo(Map<String, Object> data) {
     /**
      * Navigate to event detail page
      */
-    private void navigateToEventDetail() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
-            Parent root = loader.load();
+   private void navigateToEventDetail() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
+        Parent root = loader.load();
+ 
+        // Veriyi aktar
+        EventDetailController controller = loader.getController();
+        controller.setEventData(eventId, eventData);
 
-            EventDetailController controller = loader.getController();
-            controller.setEventData(eventId, eventData);
+        // Mevcut sahneyi al
+        Stage stage = (Stage) eventCardRoot.getScene().getWindow();
+        stage.setScene(new Scene(root));
 
-            // Get current stage from any component
-            Stage stage = (Stage) eventCardRoot.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+        // Tam ekran/yatay ekran yap
+        //stage.setMaximized(true);
+        // veya direk tüm ekranı kapla istersen:
+        stage.setFullScreen(true);
 
-        } catch (Exception e) {
-            System.out.println("❌ Error navigating to event detail: " + e.getMessage());
-            e.printStackTrace();
-        }
+        stage.show();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 
     /**
      * Navigates to the detailed event screen when the "Details" button is clicked.

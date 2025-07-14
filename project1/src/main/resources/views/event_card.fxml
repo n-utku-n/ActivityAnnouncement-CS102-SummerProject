@@ -17,6 +17,7 @@
       stylesheets="@../style/event_card.css"
       prefWidth="375"
       prefHeight="260"
+      onMouseClicked="#onCardClicked"   
       minWidth="375"
       maxWidth="375">
 

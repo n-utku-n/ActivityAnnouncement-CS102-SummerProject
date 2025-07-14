@@ -1,0 +1,82 @@
+
+
+/* club_card.css */
+
+/* Overall card container */
+.club-card {
+  -fx-background-color: white;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+  -fx-padding: 16;
+  -fx-spacing: 12;
+  -fx-alignment: center;
+}
+
+/* Logo wrapper */
+.club-card .logo-wrapper {
+  -fx-pref-width: 60;
+  -fx-pref-height: 60;
+  -fx-alignment: center;
+}
+
+/* Circular logo image */
+.club-card .logo-wrapper .club-logo {
+  -fx-fit-width: 60;
+  -fx-fit-height: 60;
+  -fx-clip: 
+    circle(
+      30px, /* center X */
+      30px, /* center Y */
+      30px  /* radius */
+    );
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0, 0, 1);
+}
+
+/* Club name and info */
+.club-card .club-info {
+  -fx-alignment: center-left;
+  -fx-spacing: 4;
+  -fx-padding: 0 0 0 8;
+}
+
+.club-card .club-name {
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+}
+
+.club-card .club-events {
+  -fx-font-size: 14px;
+  -fx-text-fill: #666;
+}
+
+/* Manager label */
+.club-card .club-manager {
+  -fx-font-size: 14px;
+  -fx-text-fill: #555;
+  -fx-font-style: italic;
+}
+
+/* View button (rounded pill shape, lighter blue) */
+.club-card .view-button {
+  -fx-background-color: #5A9BF6;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 20;   /* pill-shaped corners */
+  -fx-padding: 6 16;           /* slightly more horizontal padding */
+}
+.club-card .view-button:hover {
+  -fx-background-color: #4A8BE6;
+}
+#backButton {
+  -fx-background-color: #5A9BF6;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 20;   /* pill corners */
+  -fx-padding: 6 16;           /* vertical | horizontal padding */
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2,0,0,1);
+}
+#backButton:hover {
+  -fx-background-color: #a4c3ef;
+}

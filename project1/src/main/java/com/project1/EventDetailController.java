@@ -1,6 +1,7 @@
 package com.project1;
 
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,11 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.shape.Rectangle;
 import javafx.beans.value.ChangeListener;
+import com.project1.SceneChanger;
 
 import java.util.Map;
 
 /**
  * Controller class for displaying detailed information about an event.
+ * @author Serra
  */
 public class EventDetailController {
 
@@ -38,10 +41,15 @@ public class EventDetailController {
 
     private String clubId;
 
+    // Firestore document ID of the event
+    private String eventId;
+
     /**
      * Populates the event detail view with data from Firestore.
      */
     public void setEventData(String eventId, Map<String, Object> data) {
+        // Store the current event ID for back-navigation
+        this.eventId = eventId;
         try {
             // 1) Başlık & metinler
             eventNameLabel.setText(getString(data, "name", "Unnamed Event"));
@@ -94,6 +102,7 @@ public class EventDetailController {
                     Parent clubCard = loader.load();
                     ClubCardController ctl = loader.getController();
                     ctl.setData(clubDoc.getId(), clubDoc.getData());
+                    ctl.setPreviousEventId(this.eventId);
                     clubCardPlaceholder.getChildren().add(clubCard);
                 } else {
                     showClubError("Club not found: " + clubId);
@@ -129,7 +138,6 @@ public class EventDetailController {
      */
     @FXML
     private void handleBack(ActionEvent event) {
-        // Eğer öğrenci ise student dashboard, yönetici ise admin dashboard vb. seçebilirsiniz:
         SceneChanger.switchScene(event, "main_dashboard.fxml");
     }
 
@@ -141,6 +149,27 @@ public class EventDetailController {
     private void onJoinClicked(ActionEvent event) {
         System.out.println("▶️ Join button clicked for event: " + eventNameLabel.getText());
         // TODO: buraya gerçek katılım işlevini ekle
+    }
+
+    /**
+     * Called when navigating back from ClubProfile to reload this event.
+     */
+    public void setEventId(String eventId) {
+        // Guard against empty or null IDs
+        if (eventId == null || eventId.trim().isEmpty()) {
+            System.err.println("Warning: setEventId received empty eventId, skipping reload.");
+            return;
+        }
+        this.eventId = eventId;
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentSnapshot snap = db.collection("events").document(eventId).get().get();
+            if (snap.exists()) {
+                setEventData(eventId, snap.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

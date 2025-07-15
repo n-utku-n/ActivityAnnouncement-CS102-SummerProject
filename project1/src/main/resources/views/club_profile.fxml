@@ -4,40 +4,100 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.project1.ClubProfileController"
-            style="-fx-padding: 20;">
+            style="-fx-padding: 20;"
+            stylesheets="@../style/club_profile.css"
+            styleClass="club-profile">
 
     <top>
-        <HBox spacing="20" alignment="CENTER_LEFT">
-            <ImageView fx:id="clubLogo" fitWidth="80" fitHeight="80"/>
+        <HBox spacing="20" alignment="CENTER" styleClass="cp-header" prefWidth="600">
+            <StackPane styleClass="logo-wrapper">
+                <ImageView fx:id="clubLogo"
+                           styleClass="club-logo"
+                           fitWidth="80" fitHeight="80"
+                           preserveRatio="true"
+                           pickOnBounds="true">
+                    <clip>
+                        <Circle radius="40" centerX="40" centerY="40"/>
+                    </clip>
+                </ImageView>
+            </StackPane>
             <VBox>
                 <Label fx:id="clubNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
                 <Label fx:id="foundationDateLabel" />
             </VBox>
             <Pane HBox.hgrow="ALWAYS" />
-            <Button text="⬅ Back" onAction="#handleBack"/>
+            <Button fx:id="backButton"
+                    text="Back"
+                    styleClass="back-button"
+                    onAction="#handleBack"/>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="15">
+        <ScrollPane fitToWidth="true"
+                    vbarPolicy="AS_NEEDED"
+                    hbarPolicy="NEVER"
+                    styleClass="page-scroll">
+            <BorderPane.margin>
+                <Insets top="20"/>
+            </BorderPane.margin>
+            <VBox spacing="15"
+                  alignment="CENTER"
+                  styleClass="cp-center"
+                  prefWidth="600">
 
-            <Label text="About the Club" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <TextArea fx:id="descriptionArea" editable="false" wrapText="true" prefRowCount="3"/>
+                <!-- About, managers, Active Events, Club Events as before -->
+                <Label text="About the Club" style="-fx-font-size: 16px; -fx-font-weight: bold;">
+                    <VBox.margin>
+                        <Insets top="20"/>
+                    </VBox.margin>
+                </Label>
+                <Label fx:id="descriptionLabel"
+                       styleClass="description-label"
+                       wrapText="true"
+                       maxWidth="560"/>
 
-            <Label text="Managers" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <ListView fx:id="managersListView" prefHeight="120"/>
+                <Label text="Managers" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <VBox fx:id="managersContainer"
+                      spacing="4"
+                      styleClass="managers-container"/>
 
-            <Label text="Active Events" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <VBox fx:id="eventCardContainer" spacing="10"/>
+                <Label text="Active Events" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <ScrollPane fitToWidth="true"
+                            styleClass="events-container events-scroll"
+                            vbarPolicy="AS_NEEDED"
+                            hbarPolicy="NEVER"
+                            prefHeight="345">
+                    <FlowPane fx:id="eventCardContainer" styleClass="event-flowpane" hgap="20" vgap="16" prefWrapLength="360" prefWidth="360" alignment="TOP_LEFT">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                    </FlowPane>
+                </ScrollPane>
 
-            <Label text="Club Events" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <VBox fx:id="eventListContainer" spacing="10" style="-fx-border-color: lightgray; -fx-padding: 10;" />
+                <Label text="Club Events" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <ScrollPane fitToWidth="true"
+                            styleClass="events-container events-scroll"
+                            vbarPolicy="AS_NEEDED"
+                            hbarPolicy="NEVER"
+                            prefHeight="345">
+                    <FlowPane fx:id="eventListContainer" styleClass="event-flowpane" hgap="20" vgap="16" prefWrapLength="360" prefWidth="360" alignment="TOP_LEFT">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                    </FlowPane>
+                </ScrollPane>
 
-        </VBox>
+            </VBox>
+        </ScrollPane>
     </center>
 
 </BorderPane>

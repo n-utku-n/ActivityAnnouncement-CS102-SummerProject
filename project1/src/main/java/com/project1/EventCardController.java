@@ -447,21 +447,20 @@ private void populateParticipantInfo(Map<String, Object> data) {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
         Parent root = loader.load();
- 
+
         // Veriyi aktar
         EventDetailController controller = loader.getController();
         controller.setEventData(eventId, eventData);
 
-        // Mevcut sahneyi al
+        // Mevcut sahneyi al ve mevcut Scene'i kullanarak root'u değiştir
         Stage stage = (Stage) eventCardRoot.getScene().getWindow();
-        stage.setScene(new Scene(root));
-
-        // Tam ekran/yatay ekran yap
-        //stage.setMaximized(true);
-        // veya direk tüm ekranı kapla istersen:
-        stage.setFullScreen(true);
-
-        stage.show();
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(root);
+            stage.setScene(scene);
+        } else {
+            scene.setRoot(root);
+        }
     } catch (Exception e) {
         e.printStackTrace();
     }

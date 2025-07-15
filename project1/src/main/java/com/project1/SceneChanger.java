@@ -29,21 +29,25 @@ public class SceneChanger {
      * @param event        the ActionEvent triggered by the UI element (e.g. button)
      * @param fxmlFileName the name of the FXML file to load (must be in /views/)
      */
-    public static void switchScene(ActionEvent event, String fxmlFileName) {
+    public static FXMLLoader switchScene(ActionEvent event, String fxmlFileName) {
         try {
             FXMLLoader loader = new FXMLLoader(SceneChanger.class.getResource("/views/" + fxmlFileName.trim()));
 
             Parent root = loader.load();
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            System.out.println("➡️ Sahne yüklendi: " + fxmlFileName);
+            Scene scene = stage.getScene();
+            if (scene == null) {
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                scene.setRoot(root);
+            }
+            return loader;
 
         } catch (Exception e) {
             System.out.println("❌ Sahne geçişinde hata: " + e.getMessage());
             e.printStackTrace();
+            return null;
         }
     }
 }

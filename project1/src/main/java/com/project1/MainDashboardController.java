@@ -8,11 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.application.Platform;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.firebase.cloud.FirestoreClient;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
@@ -31,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.google.cloud.Timestamp;
+import com.project1.SceneChanger;
+import javafx.event.ActionEvent;
 
 /**
  * Controller class for the main dashboard accessible by student and club_manager roles.
@@ -75,50 +72,23 @@ public class MainDashboardController {
             Stage stage = (Stage) mainEventContainer.getScene().getWindow();
             stage.setMaximized(true);
             // eğer gerçekten tam ekran istersen:
-            stage.setFullScreen(true);
+            // stage.setFullScreen(true);
         }); 
     }
     private void loadAppLogo() {
-    // Firestore referans
-    DocumentReference settingsRef = FirestoreClient.getFirestore()
-        .collection("settings")
-        .document("ui");
-
-    try {
-        // Bloklayan okuma
-        DocumentSnapshot snap = settingsRef.get().get();
-        if (!snap.exists()) {
-            System.err.println("⚠️ Ayarlar belgesi bulunamadı: settings/ui");
-            return;
+        // Load logos from application resources instead of Firebase
+        try {
+            bilkentLogo.setImage(new Image(
+                getClass().getResourceAsStream("/images/bilcall_logo.png")
+            ));
+            appLogo.setImage(new Image(
+                getClass().getResourceAsStream("/images/bilkent_logo.png")
+            ));
+        } catch (Exception e) {
+            System.err.println("❌ Logo yüklenirken hata: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        // 1) Bilkent logosu
-        String bilkentUrl = snap.getString("bilkentLogoUrl");
-        if (bilkentUrl != null && !bilkentUrl.isEmpty()) {
-            Platform.runLater(() -> {
-                System.out.println("🔍 Bilkent logo yükleniyor: " + bilkentUrl);
-                bilkentLogo.setImage(new Image(bilkentUrl, true));
-            });
-        } else {
-            System.out.println("⚠️ bilkentLogoUrl alanı boş.");
-        }
-
-        // 2) Uygulama (BilCall) logosu
-        String appLogoUrl = snap.getString("appLogoUrl");
-        if (appLogoUrl != null && !appLogoUrl.isEmpty()) {
-            Platform.runLater(() -> {
-                System.out.println("🔍 Uygulama (BilCall) logo yükleniyor: " + appLogoUrl);
-                appLogo.setImage(new Image(appLogoUrl, true));
-            });
-        } else {
-            System.out.println("⚠️ appLogoUrl alanı boş.");
-        }
-
-    } catch (Exception e) {
-        System.err.println("❌ Ayarlar yüklenirken hata: " + e.getMessage());
-        e.printStackTrace();
     }
-}
     
 
   private void loadEvents() {
@@ -127,7 +97,7 @@ public class MainDashboardController {
     System.out.println("🗑️ Önceki kartlar temizlendi.");
 
     try {
-        List<QueryDocumentSnapshot> documents = FirestoreClient
+        List<com.google.cloud.firestore.QueryDocumentSnapshot> documents = com.google.firebase.cloud.FirestoreClient
                 .getFirestore()
                 .collection("events")
                 .get()
@@ -136,7 +106,7 @@ public class MainDashboardController {
 
         System.out.println("📥 Firestore’dan " + documents.size() + " event belgesi alındı.");
 
-        for (QueryDocumentSnapshot doc : documents) {
+        for (com.google.cloud.firestore.QueryDocumentSnapshot doc : documents) {
             String eventId = doc.getId();
             Map<String, Object> data = doc.getData();
             System.out.println("🎯 İşleniyor: eventId=" + eventId);
@@ -151,7 +121,7 @@ public class MainDashboardController {
             String clubId = (String) data.get("clubId");
             if (clubId != null && !clubId.isEmpty()) {
                 try {
-                    DocumentSnapshot clubDoc = FirestoreClient.getFirestore()
+                    com.google.cloud.firestore.DocumentSnapshot clubDoc = com.google.firebase.cloud.FirestoreClient.getFirestore()
                             .collection("clubs")
                             .document(clubId)
                             .get()
@@ -200,22 +170,23 @@ public class MainDashboardController {
      * @author Utku
      */
     @FXML
-    private void handleProfile() {
-        System.out.println("👤 Profil butonuna tıklandı (gelecekte profil ekranı açılacak).");
+    private void handleProfile(ActionEvent event) {
+        // Navigate to the profile view using SceneChanger
+        SceneChanger.switchScene(event, "profile.fxml");
     }
 
     private void loadAllEvents() {
     eventCardContainer.getChildren().clear();
 
     try {
-        List<QueryDocumentSnapshot> documents = FirestoreClient
+        List<com.google.cloud.firestore.QueryDocumentSnapshot> documents = com.google.firebase.cloud.FirestoreClient
                 .getFirestore()
                 .collection("events")
                 .get()
                 .get()
                 .getDocuments();
 
-        for (DocumentSnapshot doc : documents) {
+        for (com.google.cloud.firestore.DocumentSnapshot doc : documents) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
             VBox card = loader.load();
 
@@ -237,11 +208,11 @@ public class MainDashboardController {
     //firesotre şimdilik örnek event ekleme
 //    private void uploadDummyEventToFirestore() {
 //     try {
-//         Firestore db = FirestoreClient.getFirestore();
+//         com.google.cloud.firestore.Firestore db = com.google.firebase.cloud.FirestoreClient.getFirestore();
 
 //         // 🔹 Club bilgileri
 //         String clubId = "cs_club";
-//         DocumentSnapshot clubDoc = db.collection("clubs").document(clubId).get().get();
+//         com.google.cloud.firestore.DocumentSnapshot clubDoc = db.collection("clubs").document(clubId).get().get();
 
 //         String clubName;
 //         if (!clubDoc.exists()) {
@@ -277,7 +248,7 @@ public class MainDashboardController {
 //         event.put("posterUrl", "https://via.placeholder.com/400x180.png");
 
 //         // 🔹 Event Firestore’a ekleniyor
-//         DocumentReference docRef = db.collection("events").add(event).get();
+//         com.google.cloud.firestore.DocumentReference docRef = db.collection("events").add(event).get();
 //         System.out.println("✅ Dummy event Firestore'a yüklendi: " + docRef.getId());
 
 //     } catch (Exception e) {
@@ -288,7 +259,7 @@ public class MainDashboardController {
 
 private void uploadDummyEventsToFirestore() {
     try {
-        Firestore db = FirestoreClient.getFirestore();
+        com.google.cloud.firestore.Firestore db = com.google.firebase.cloud.FirestoreClient.getFirestore();
         Timestamp now = Timestamp.now();
 
         // 🔹 Birden fazla dummy event bilgisi
@@ -325,7 +296,7 @@ private void uploadDummyEventsToFirestore() {
 
         // 🔹 Her bir event’i Firestore’a ekle
         for (Map<String, Object> event : events) {
-            DocumentReference docRef = db
+            com.google.cloud.firestore.DocumentReference docRef = db
                 .collection("events")
                 .add(event)
                 .get();  // Bekle ve referansı al

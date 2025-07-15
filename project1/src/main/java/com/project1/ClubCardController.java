@@ -6,16 +6,14 @@ import com.google.firebase.cloud.FirestoreClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 
 import java.util.Map;
+
+import com.project1.ClubProfileController;
 
 /**
  * Controller class for representing a single club card UI component.
@@ -24,7 +22,7 @@ import java.util.Map;
  * 
  * Associated with FXML: club_card.fxml
  * 
- * @author Utku
+ * @author Utku, Serra
  */
 public class ClubCardController {
 
@@ -42,6 +40,9 @@ public class ClubCardController {
 
     private String clubId;
     private String clubName;
+
+    /** Event ID to return to when opening club profile */
+    private String previousEventId;
 
     /**
      * Populates the card UI with the given club data.
@@ -85,6 +86,13 @@ public class ClubCardController {
     }
 
     /**
+     * Stores the previous event ID so ClubProfile can return here.
+     */
+    public void setPreviousEventId(String eventId) {
+        this.previousEventId = eventId;
+    }
+
+    /**
      * Handles the "View" button action.
      * Switches to the club profile scene and passes the selected club's ID.
      *
@@ -92,18 +100,10 @@ public class ClubCardController {
      */
     @FXML
     private void handleView(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/club_profile.fxml"));
-            Parent root = loader.load();
-
+        FXMLLoader loader = SceneChanger.switchScene(event, "club_profile.fxml");
+        if (loader != null) {
             ClubProfileController controller = loader.getController();
-            controller.setClubId(clubId);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+            controller.setClubContext(clubId, previousEventId);
         }
     }
 

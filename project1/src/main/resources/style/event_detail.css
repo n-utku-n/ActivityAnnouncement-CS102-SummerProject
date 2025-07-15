@@ -119,10 +119,4 @@
 /* Make injected club logo circular */
 .club-logo {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
-    -fx-clip: 
-        shape(circle(
-            centerX 40,
-            centerY 40,
-            radius 40
-        ));
 }

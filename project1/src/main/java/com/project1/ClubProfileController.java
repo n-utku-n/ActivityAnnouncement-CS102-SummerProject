@@ -1,22 +1,44 @@
 package com.project1;
 
+import java.util.ArrayList;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import com.project1.EventDetailController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.scene.layout.FlowPane;
+import com.google.cloud.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import com.project1.EventDetailController;
+import java.io.IOException;
 
 /**
  * Controller class for the Club Profile view.
@@ -26,7 +48,7 @@ import java.util.Map;
  * 
  * Associated with: club_profile.fxml
  * 
- * @author: Utku
+ * @author: Utku Serra
  */
 public class ClubProfileController {
 
@@ -42,34 +64,63 @@ public class ClubProfileController {
     @FXML
     private Label foundationDateLabel;
 
-    /** TextArea displaying club's description */
+    /** Label displaying club's description */
     @FXML
-    private TextArea descriptionArea;
+    private Label descriptionLabel;
 
-    /** ListView displaying managers of the club */
+    /** VBox container for managers of the club */
     @FXML
-    private ListView<String> managersListView;
+    private VBox managersContainer;
 
     /** VBox container for the event cards (optional/legacy) */
     @FXML
-    private VBox eventCardContainer;
+    private FlowPane eventCardContainer;
 
     /** VBox container for club-specific events */
     @FXML
-    private VBox eventListContainer;
+    private FlowPane eventListContainer;
 
     /** Club document ID from Firestore */
     private String clubId;
 
+    /** Event ID to return to when clicking Back */
+    private String previousEventId;
+
+    @FXML
+    public void initialize() {
+        clubLogo.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obs2, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        ((Stage) newWindow).setMaximized(true);
+                    }
+                });
+            }
+        });
+    }
+
     /**
-     * Sets the current club ID and loads its data from Firestore.
-     * 
-     * @param clubId Firestore document ID of the club
+     * Initializes this view for a given club and event.
+     * @param clubId Firestore ID of the club
+     * @param previousEventId Event ID to return to on back
      */
-    public void setClubId(String clubId) {
+    public void setClubContext(String clubId, String previousEventId) {
         this.clubId = clubId;
-        loadClubData();     // Load club info (logo, desc, managers, etc.)
-        loadClubEvents();   // Load events created by this club
+        this.previousEventId = previousEventId;
+        try {
+            loadClubData();    // populate descriptionArea and managersListView
+            loadClubEvents();  // populate event sections
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @deprecated Use setClubContext instead.
+     */
+    @Deprecated
+    public void setClubId(String clubId) {
+        setClubContext(clubId, null);
     }
 
     /**
@@ -89,17 +140,39 @@ public class ClubProfileController {
                 foundationDateLabel.setText("Founded: " + data.get("foundationDate"));
 
                 // Set club description
-                descriptionArea.setText((String) data.get("description"));
+                descriptionLabel.setText((String) data.get("description"));
+
+                // Load managers for this club from users collection
+                try {
+                    Query mgrQuery = db.collection("users")
+                        .whereEqualTo("clubId", clubId)
+                        .whereEqualTo("role", "manager");
+                    List<QueryDocumentSnapshot> mgrDocs = mgrQuery.get().get().getDocuments();
+                    List<String> managerNames = new ArrayList<>();
+                    for (QueryDocumentSnapshot mDoc : mgrDocs) {
+                        String name = mDoc.getString("name");
+                        if (name != null) managerNames.add(name);
+                    }
+                    // If no managers found, show default
+                    if (managerNames.isEmpty()) {
+                        managerNames.add("Unknown Manager");
+                    }
+                    // Populate manager labels
+                    managersContainer.getChildren().clear();
+                    for (String name : managerNames) {
+                        Label lbl = new Label(name);
+                        lbl.getStyleClass().add("manager-label");
+                        managersContainer.getChildren().add(lbl);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 // Load and display logo
                 String logoUrl = (String) data.get("logoUrl");
                 if (logoUrl != null) {
                     clubLogo.setImage(new Image(logoUrl, true)); // async load
                 }
-
-                // Populate manager list
-                List<String> managers = (List<String>) data.get("managers");
-                managersListView.getItems().setAll(managers);
 
                 // Clear old cards (if legacy system used)
                 eventCardContainer.getChildren().clear();
@@ -115,6 +188,7 @@ public class ClubProfileController {
      * and displays each as an event card (via FXML).
      */
     private void loadClubEvents() {
+        eventCardContainer.getChildren().clear();
         eventListContainer.getChildren().clear();
 
         try {
@@ -126,16 +200,30 @@ public class ClubProfileController {
                     .getDocuments();
 
             for (QueryDocumentSnapshot doc : documents) {
-                String eventClubId = doc.getString("clubId");
+                try {
+                    String eventClubId = doc.getString("clubId");
 
-                if (eventClubId != null && eventClubId.equals(clubId)) {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
-                    HBox card = loader.load();
+                    if (eventClubId != null && eventClubId.equals(clubId)) {
+                        // Always add to Club Events list
+                        FXMLLoader loaderClub = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
+                        VBox clubCard = loaderClub.load();
+                        EventCardController clubCtrl = loaderClub.getController();
+                        clubCtrl.setData(doc.getId(), doc.getData());
+                        eventListContainer.getChildren().add(clubCard);
 
-                    EventCardController controller = loader.getController();
-                    controller.setData(doc.getId(), doc.getData());
-
-                    eventListContainer.getChildren().add(card);
+                        // If not expired, also add to Active Events
+                        Timestamp endTs = doc.getTimestamp("endDate");
+                        if (endTs == null || endTs.toDate().after(new Date())) {
+                            FXMLLoader loaderActive = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
+                            VBox activeCard = loaderActive.load();
+                            EventCardController activeCtrl = loaderActive.getController();
+                            activeCtrl.setData(doc.getId(), doc.getData());
+                            eventCardContainer.getChildren().add(activeCard);
+                        }
+                    }
+                } catch (Exception e) {
+                    // Log and continue with next document
+                    e.printStackTrace();
                 }
             }
 
@@ -145,12 +233,23 @@ public class ClubProfileController {
     }
 
     /**
-     * Handles the "Back" button action to return to the admin dashboard.
-     * 
-     * @param event the event triggered by button click
+     * Handles the "Back" button action to always return to the Event Detail screen.
      */
     @FXML
     private void handleBack(ActionEvent event) {
-        SceneChanger.switchScene(event, "admin_dashboard.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
+            Parent detailRoot = loader.load();
+            EventDetailController detailCtrl = loader.getController();
+            // Pass the previous event ID if available
+            if (previousEventId != null && !previousEventId.trim().isEmpty()) {
+                detailCtrl.setEventId(previousEventId);
+            }
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(detailRoot));
+            stage.setMaximized(true); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

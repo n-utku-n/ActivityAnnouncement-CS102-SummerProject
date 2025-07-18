@@ -26,6 +26,14 @@
     -fx-padding: 8px 0;
 }
 
+/* Make stars yellow in the rating selection/input */
+#starsBox .label,
+#starsBox .star,
+#starsBox .rating-star {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 20px; /* (optional: adjust for visibility) */
+}
+
 /* Comment text area */
 #commentTextArea {
     -fx-background-color: white;

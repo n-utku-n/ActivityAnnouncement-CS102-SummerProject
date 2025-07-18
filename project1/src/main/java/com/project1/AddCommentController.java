@@ -185,75 +185,119 @@ private void handleBack() {
     }
 
     private void saveNewComment(String text, int rating) {
-        String evId = eventId;
-        Timestamp now = Timestamp.now();
+    String evId = eventId;
+    Timestamp now = Timestamp.now();
 
-        CompletableFuture.runAsync(() -> {
-            try {
-                var db = FirestoreClient.getFirestore();
-                CollectionReference col = db
-                    .collection("events")
-                    .document(evId)
-                    .collection("comments");
+    CompletableFuture.runAsync(() -> {
+        try {
+            var db = FirestoreClient.getFirestore();
+            DocumentReference eventRef = db.collection("events").document(evId);
+            CollectionReference commentsCol = eventRef.collection("comments");
 
-                Map<String,Object> data = new HashMap<>();
-                data.put("eventId",   evId);
-                data.put("userName",  currentUser.getName() 
-                                    + (currentUser.getSurname().isEmpty() ? "" : " " + currentUser.getSurname()));
-                data.put("firstName", currentUser.getName());
-                data.put("lastName",  currentUser.getSurname());
-                data.put("studentNo", currentUser.getStudentId());
-                data.put("role",      currentUser.getRole());
-                data.put("text",      text);
-                data.put("rating",    (double) rating);
-                data.put("timestamp", now);
+            // 1) Yeni yorumu ekle
+            Map<String,Object> data = new HashMap<>();
+            data.put("eventId",   evId);
+            data.put("userName",  currentUser.getName() 
+                                + (currentUser.getSurname().isEmpty() ? "" : " " + currentUser.getSurname()));
+            data.put("firstName", currentUser.getName());
+            data.put("lastName",  currentUser.getSurname());
+            data.put("studentNo", currentUser.getStudentId());
+            data.put("role",      currentUser.getRole());
+            data.put("text",      text);
+            data.put("rating",    (double) rating);
+            data.put("timestamp", now);
 
-                col.add(data).get();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }, ioExecutor)
-        .thenRun(() -> Platform.runLater(this::closeWithSuccess))
-        .exceptionally(ex -> {
-            Platform.runLater(() -> new Alert(
-                Alert.AlertType.ERROR,
-                "Yorum ekleme başarısız: " + ex.getMessage(),
-                ButtonType.OK
-            ).show());
-            return null;
-        });
-    }
+            commentsCol.add(data).get();
 
-    /**
-     * Update an existing comment in Firestore.
-     */
-    private void updateComment(String text, int rating) {
-        String evId = eventId;
-        Timestamp now = Timestamp.now();
-        CompletableFuture.runAsync(() -> {
-            try {
-                DocumentReference docRef = FirestoreClient.getFirestore()
-                    .collection("events").document(evId)
-                    .collection("comments").document(editingCommentId);
-                Map<String,Object> updates = new HashMap<>();
+            // 2) Event belgesinde transaction ile rating ve participant sayısını güncelle
+            db.runTransaction(transaction -> {
+                DocumentSnapshot eventSnap = transaction.get(eventRef).get();
+
+                long ratingCount = eventSnap.contains("ratingCount") ? eventSnap.getLong("ratingCount") : 0;
+                double ratingSum = eventSnap.contains("ratingSum") ? eventSnap.getDouble("ratingSum") : 0.0;
+                long currentParticipants = eventSnap.contains("currentParticipants") ? eventSnap.getLong("currentParticipants") : 0;
+
+                long newRatingCount = ratingCount + 1;
+                double newRatingSum = ratingSum + rating;
+                long newCurrentParticipants = currentParticipants + 1;
+
+                double newAverage = newRatingCount > 0 ? newRatingSum / newRatingCount : 0.0;
+
+                transaction.update(eventRef, 
+                    "ratingCount", newRatingCount,
+                    "ratingSum", newRatingSum,
+                    "averageRating", newAverage,
+                    "currentParticipants", newCurrentParticipants);
+
+                return null;
+            }).get();
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }, ioExecutor)
+    .thenRun(() -> Platform.runLater(this::closeWithSuccess))
+    .exceptionally(ex -> {
+        Platform.runLater(() -> new Alert(
+            Alert.AlertType.ERROR,
+            "Yorum ekleme başarısız: " + ex.getMessage(),
+            ButtonType.OK
+        ).show());
+        return null;
+    });
+}
+
+private void updateComment(String text, int rating) {
+    String evId = eventId;
+    String commentId = editingCommentId;
+    Timestamp now = Timestamp.now();
+    CompletableFuture.runAsync(() -> {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            DocumentReference eventRef = db.collection("events").document(evId);
+            DocumentReference commentRef = eventRef.collection("comments").document(commentId);
+
+            db.runTransaction(transaction -> {
+                // 1. Eski rating'i bul
+                DocumentSnapshot commentSnap = transaction.get(commentRef).get();
+                double oldRating = commentSnap.contains("rating") ? commentSnap.getDouble("rating") : 0.0;
+
+                // 2. Event'in mevcut ratingSum ve ratingCount'unu bul
+                DocumentSnapshot eventSnap = transaction.get(eventRef).get();
+                double ratingSum = eventSnap.contains("ratingSum") ? eventSnap.getDouble("ratingSum") : 0.0;
+                long ratingCount = eventSnap.contains("ratingCount") ? eventSnap.getLong("ratingCount") : 0;
+
+                // 3. Yeni toplam ve ortalamayı hesapla
+                double newSum = ratingSum - oldRating + rating;
+                double newAvg = ratingCount > 0 ? newSum / ratingCount : 0.0;
+
+                // 4. Event'i güncelle
+                transaction.update(eventRef, "ratingSum", newSum, "averageRating", newAvg);
+
+                // 5. Yorumu güncelle
+                Map<String, Object> updates = new HashMap<>();
                 updates.put("text", text);
                 updates.put("rating", (double) rating);
                 updates.put("timestamp", now);
-                docRef.update(updates).get();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }, ioExecutor)
-        .thenRun(() -> Platform.runLater(this::closeWithSuccess))
-        .exceptionally(ex -> {
-            Platform.runLater(() -> new Alert(
-                Alert.AlertType.ERROR,
-                "Yorum güncelleme başarısız: " + ex.getMessage(),
-                ButtonType.OK
-            ).show());
-            return null;
-        });
-    }
+                transaction.update(commentRef, updates);
+
+                return null;
+            }).get();
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }, ioExecutor)
+    .thenRun(() -> Platform.runLater(this::closeWithSuccess))
+    .exceptionally(ex -> {
+        Platform.runLater(() -> new Alert(
+            Alert.AlertType.ERROR,
+            "Yorum güncelleme başarısız: " + ex.getMessage(),
+            ButtonType.OK
+        ).show());
+        return null;
+    });
+}
 
     private void closeWithSuccess() {
         handleBack();

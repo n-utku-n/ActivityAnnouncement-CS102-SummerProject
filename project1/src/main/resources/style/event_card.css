@@ -47,8 +47,27 @@
 .event-title { -fx-font-size: 14px; -fx-text-fill: #111; }
 .club-name   { -fx-font-size: 12px; -fx-text-fill: #333; -fx-font-style: italic; }
 .event-date  { -fx-font-size: 10px; -fx-text-fill: #666; -fx-font-style: italic; }
-.progress-container { -fx-pref-width: 180px; -fx-pref-height: 12px; }
-.participant-bar { -fx-pref-width: 180px; -fx-pref-height: 12px; -fx-background-radius: 6; -fx-accent: #3B5BA5; }
-.min-participant-line { -fx-fill: #E63946; }
+.progress-container { -fx-pref-width: 180px; -fx-pref-height: 16px; }
+.participant-bar { -fx-pref-width: 180px;-fx-background-color: #E5E7EB, white; -fx-accent: #3B5BA5; -fx-pref-height: 16px; -fx-background-radius: 6; -fx-accent: #3B5BA5; }
+.min-participant-line {
+  -fx-fill: #EF4444;
+  -fx-width: 2px;
+  -fx-height: 16px;
+  -fx-translate-y: 0; /* Ortada dursun */
+}
 .participant-number,
 .participant-slash { -fx-font-size: 10px; -fx-text-fill: #111; -fx-padding: 0 4 0 4; -fx-font-style: italic; }
+.min-participant-line {
+    -fx-fill: #E63946;
+    -fx-width: 2px;
+    -fx-height: 16px;
+}
+.rating-stars {
+  -fx-font-size: 14px;
+  -fx-text-fill: #FFD600; /* parlak sarı */
+}
+.rating-value {
+  -fx-font-size: 12px;
+  -fx-text-fill: #555;
+  -fx-padding: 0 0 0 4;
+}

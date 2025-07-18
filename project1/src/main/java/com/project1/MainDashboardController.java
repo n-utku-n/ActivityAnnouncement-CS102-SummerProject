@@ -66,7 +66,7 @@ public class MainDashboardController {
         //uploadDummyEventsToFirestore(); // sadece ilk test için
         //loadDummyEvents(); // kapalı kalsın
         loadAppLogo(); 
-
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> handleSearch(null));
          Platform.runLater(() -> {
             Stage stage = (Stage) mainEventContainer.getScene().getWindow();
             stage.setMaximized(true);
@@ -76,6 +76,70 @@ public class MainDashboardController {
     }
     private UserModel loggedInUser;
 
+    @FXML
+private void handleSearch(ActionEvent event) {
+    String keyword = searchField.getText().trim().toLowerCase();
+    System.out.println("🔎 Search: " + keyword);
+    if (keyword.isEmpty()) {
+        loadEvents(); // Arama boşsa tüm eventleri göster
+        return;
+    }
+
+    mainEventContainer.getChildren().clear();
+    try {
+        List<com.google.cloud.firestore.QueryDocumentSnapshot> documents = com.google.firebase.cloud.FirestoreClient
+                .getFirestore()
+                .collection("events")
+                .get()
+                .get()
+                .getDocuments();
+
+        for (com.google.cloud.firestore.QueryDocumentSnapshot doc : documents) {
+            String name = doc.getString("name");
+            String desc = doc.getString("description");
+            if ((name != null && name.toLowerCase().contains(keyword)) ||
+                (desc != null && desc.toLowerCase().contains(keyword))) {
+
+                // Event kartı oluştur
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
+                VBox eventCard = loader.load();
+                EventCardController controller = loader.getController();
+                controller.setCurrentUser(loggedInUser);
+
+                // clubName/clubId işlerini de ekle istersen (yukarıdaki loadEvents ile aynı şekilde)
+                Map<String, Object> data = doc.getData();
+                String clubId = (String) data.get("clubId");
+                if (clubId != null && !clubId.isEmpty()) {
+                    try {
+                        com.google.cloud.firestore.DocumentSnapshot clubDoc = com.google.firebase.cloud.FirestoreClient.getFirestore()
+                                .collection("clubs")
+                                .document(clubId)
+                                .get()
+                                .get();
+                        if (clubDoc.exists()) {
+                            String cname = clubDoc.getString("name");
+                            data.put("clubName", cname != null ? cname : "Unknown Club");
+                            String logoUrl = clubDoc.getString("logoUrl");
+                            if (logoUrl != null && !logoUrl.isEmpty()) {
+                                data.put("logoUrl", logoUrl);
+                            }
+                        } else {
+                            data.put("clubName", "Unknown Club");
+                        }
+                    } catch (Exception ex) {
+                        data.put("clubName", "Unknown Club");
+                    }
+                } else {
+                    data.put("clubName", "Unknown Club");
+                }
+                controller.setData(doc.getId(), data);
+                mainEventContainer.getChildren().add(eventCard);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     /**
      * SignInController’dan geçirilen UserModel’i saklar
      * ve UI’yı günceller (\"Hoş geldin Serra\" gibi).

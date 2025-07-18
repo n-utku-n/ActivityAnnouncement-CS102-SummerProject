@@ -35,6 +35,17 @@
         <Rectangle width="355" height="200" arcWidth="16" arcHeight="16"/>
       </clip>
     </ImageView>
+
+    <!-- Rating yıldızları eventImage'in üstünde sağ üst köşede -->
+    <HBox fx:id="ratingBox"
+          spacing="4"
+          alignment="CENTER_RIGHT"
+          style="-fx-padding: 8 12 0 0; -fx-background-color: transparent; -fx-translate-y: 140;"
+          StackPane.alignment="TOP_RIGHT">
+        <Label fx:id="ratingStarsLabel" styleClass="rating-stars"/>
+        <Label fx:id="ratingValueLabel" styleClass="rating-value"/>
+    </HBox>
+
   </StackPane>
 
   <!-- 2) Alt içerik -->
@@ -66,12 +77,13 @@
         <StackPane styleClass="progress-container">
           <ProgressBar fx:id="participantBar" styleClass="participant-bar"/>
           <Rectangle fx:id="minParticipantLine"
-                     width="2" height="12"
-                     styleClass="min-participant-line"/>
+                    width="2" 
+                    height="12"
+                    styleClass="min-participant-line"/>
         </StackPane>
         <Label fx:id="currentParticipantsText" styleClass="participant-number"/>
-        <Label text="/"                             styleClass="participant-slash"/>
-        <Label fx:id="maxParticipantsText"     styleClass="participant-number"/>
+        <Label text="/" styleClass="participant-slash"/>
+        <Label fx:id="maxParticipantsText" styleClass="participant-number"/>
       </HBox>
     </VBox>
   </HBox>

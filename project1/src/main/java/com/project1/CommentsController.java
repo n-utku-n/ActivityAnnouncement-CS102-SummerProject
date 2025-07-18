@@ -180,13 +180,13 @@ public class CommentsController {
 
     private void renderComments(List<CommentRecord> comments) {
         averageStarsBox.getChildren().clear();
-        double avg = comments.stream().mapToDouble(cr -> cr.rating).average().orElse(0.0);
-        int full = (int)Math.round(avg);
-        for (int i = 0; i < 5; i++) {
-            Label star = new Label(i < full ? "★" : "☆");
-            averageStarsBox.getChildren().add(star);
-        }
-
+    double avg = comments.stream().mapToDouble(cr -> cr.rating).average().orElse(0.0);
+    int full = (int)Math.round(avg);
+    for (int i = 0; i < 5; i++) {
+        Label star = new Label(i < full ? "★" : "☆");
+        star.getStyleClass().add("comments-average-star"); // BURAYA EKLE!
+        averageStarsBox.getChildren().add(star);
+    }
         commentsContainer.getChildren().clear();
         if (comments.isEmpty()) {
             commentsContainer.getChildren().add(new Label("No comments yet."));

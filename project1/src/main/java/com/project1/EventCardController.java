@@ -1,5 +1,6 @@
 package com.project1;
 
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 // width listener’ı tutmak için
 import com.google.cloud.Timestamp;
@@ -75,6 +76,12 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
 
     @FXML 
     private Label eventDateText;
+    @FXML
+    private HBox ratingBox;
+    @FXML
+    private Label ratingStarsLabel;
+    @FXML
+    private Label ratingValueLabel;
 
     // REMOVED: eventDateText is no longer in the design
     // @FXML
@@ -130,7 +137,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     
         // Initialize components if they're null (fallback lookup)
         initializeComponents();
-
+        
         // Validate required components
         if (!validateComponents()) {
             System.out.println("❌ Required components are missing, cannot populate card");
@@ -148,8 +155,31 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
 
         // Load images
         loadImages(data);
+        showAverageRating(data);
     }
 
+    private void showAverageRating(Map<String, Object> data) {
+    double avg = 0.0;
+    if (data.get("averageRating") instanceof Number) {
+        avg = ((Number) data.get("averageRating")).doubleValue();
+    }
+    // Yıldızları oluştur
+    StringBuilder stars = new StringBuilder();
+    int full = (int) avg;
+    for (int i = 0; i < full; i++) stars.append("★");
+    if (avg - full >= 0.5) stars.append("☆"); // Yarım yıldız da olabilir
+    while (stars.length() < 5) stars.append("☆");
+
+    ratingStarsLabel.setText(stars.toString());
+    ratingValueLabel.setText(String.format("%.1f", avg));
+    
+    // Görünürlüğü ayarla
+    if (avg > 0) {
+        ratingBox.setVisible(true);
+    } else {
+        ratingBox.setVisible(false);
+    }
+}
     /**
      * Initialize components using lookup if FXML injection failed
      */
@@ -286,48 +316,60 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
   /**
  * Populate participant information and progress bar
  */
-private void populateParticipantInfo(Map<String, Object> data) {
-    // 1) Katılımcı sayıları
+    private void populateParticipantInfo(Map<String, Object> data) {
     int current = 0, min = 0, max = 100;
     try {
         Object o;
-        if ((o = data.get("currentParticipants")) != null) current = ((Number)o).intValue();
-        if ((o = data.get("minParticipants"))     != null) min     = ((Number)o).intValue();
-        if ((o = data.get("maxParticipants"))     != null) max     = ((Number)o).intValue();
+        if (data.get("participants") instanceof java.util.List) {
+            current = ((java.util.List<?>) data.get("participants")).size();
+        } else if ((o = data.get("currentParticipants")) != null) {
+            current = ((Number)o).intValue();
+        }
+        if ((o = data.get("minParticipants")) != null) min = ((Number)o).intValue();
+        if ((o = data.get("maxParticipants")) != null) max = ((Number)o).intValue();
     } catch (Exception e) {
         System.out.println("⚠️ Error parsing participant numbers: " + e.getMessage());
     }
 
-    System.out.printf("🔢 Participants - current: %d, min: %d, max: %d%n", current, min, max);
+    participantBar.setProgress(max > 0 ? (double) current / max : 0);
 
-    // 2) ProgressBar’ı ayarla
-    double progress = max > 0 ? (double) current / max : 0;
-    participantBar.setProgress(progress);
+    final int finalMin = min;
+    final int finalMax = max;
+    Platform.runLater(() -> {
+        double barWidth = participantBar.getWidth();
+        double lineWidth = minParticipantLine.getWidth();
+        double lineCenterOffset = lineWidth / 2;
 
-    // 3) Metinleri güncelle
+        if (barWidth < 2 || lineWidth < 1) {
+            Platform.runLater(() -> {
+                double retryWidth = participantBar.getWidth();
+                double retryLineWidth = minParticipantLine.getWidth();
+                double retryCenterOffset = retryLineWidth / 2;
+                double ratio = finalMax > 0 ? (double) finalMin / finalMax : 0;
+
+                if (finalMin <= 0 || finalMin >= finalMax) {
+                    minParticipantLine.setOpacity(0);
+                } else {
+                    double translateX = (retryWidth * ratio) - retryCenterOffset;
+                    minParticipantLine.setTranslateX(translateX);
+                    minParticipantLine.setOpacity(1);
+                }
+            });
+        } else {
+            double minRatio = finalMax > 0 ? (double) finalMin / finalMax : 0;
+            if (finalMin <= 0 || finalMin >= finalMax) {
+                minParticipantLine.setOpacity(0);
+            } else {
+                double translateX = (barWidth * minRatio) - lineCenterOffset;
+                minParticipantLine.setTranslateX(translateX);
+                minParticipantLine.setOpacity(1);
+            }
+        }
+    });
+
     currentParticipantsText.setText(String.valueOf(current));
     maxParticipantsText.setText(String.valueOf(max));
-
-    // 4) Önceki listener’i temizle (eğer daha önce eklenmişse)
-    if (widthListener != null) {
-        participantBar.widthProperty().removeListener(widthListener);
-    }
-
-    // 5) Listener’ı tanımla
-    final double ratio = (max > 0 ? (double) min / max : 0);
-    widthListener = (obs, oldW, newW) -> {
-        double barWidth = newW.doubleValue();
-        // Çizginin x konumu = çubuğun solundan barWidth*ratio
-        minParticipantLine.setTranslateX(barWidth * ratio);
-    };
-
-    // 6) Hemen bir kez çalıştır
-    widthListener.changed(null, 0.0, participantBar.getWidth());
-
-    // 7) Dinleme başladığında hem ilk boyut hem de sonradan değişimler için
-    participantBar.widthProperty().addListener(widthListener);
 }
-
     /**
      * Position the red minimum participant line on the progress bar
      */

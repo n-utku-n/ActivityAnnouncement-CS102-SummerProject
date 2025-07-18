@@ -82,7 +82,9 @@
 }
 
 .comments-average-star {
-    -fx-font-size: 18px;
-    -fx-text-fill: #FFD700;
-    -fx-padding: 0 1;
+    -fx-font-size: 22px;
+    -fx-text-fill: #FFD700; /* Gold yellow */
+    -fx-padding: 0 2;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #FFDF32, 7, 0, 0, 1);
 }

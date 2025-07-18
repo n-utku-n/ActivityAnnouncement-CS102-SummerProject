@@ -1,131 +1,134 @@
-/* menu-bar */
+/* Menü Bar */
 .menu-bar {
   -fx-background-color: white;
-  -fx-border-color: #ddd;
+  -fx-border-color: #e5e7eb;
   -fx-border-width: 0 0 1 0;
-  -fx-padding: 0 20;
+  -fx-padding: 0 28;
 }
 
-/* logo */
-.logo-image {
-  -fx-opacity: 1;
-}
-
-/* BilCall başlık için kapsayıcı */
-.title-label {
-  /* logoyla arasında boşluk bırakmak için */
-  -fx-padding: 0 20 0 10;
-}
-
-/* Başlık metinleri */
-.title-blue {
-  -fx-fill: #3B5BA5;
-  -fx-font-size: 20px;
-  -fx-font-weight: bold;
-}
-.title-red {
-  -fx-fill: #E63946;
-  -fx-font-size: 20px;
-  -fx-font-weight: bold;
-}
-
-/* Menü öğeleri */
+/* Menü Öğeleri */
 .menu-item {
-  -fx-font-size: 14px;
-  -fx-text-fill: #333;
+  -fx-font-size: 15px;
+  -fx-text-fill: #22223b;
   -fx-cursor: hand;
-  -fx-padding: 0 12;
+  -fx-padding: 0 14;
+  -fx-background-color: transparent;
 }
 .menu-item:hover {
   -fx-underline: true;
+  -fx-text-fill: #3B5BA5;
 }
 
-/* Profil butonu */
+/* Profil Butonu - Modern Chip */
 .profile-button {
-  -fx-background-color: #3B5BA5;
-  -fx-text-fill: white;
-  -fx-background-radius: 4;
-  -fx-padding: 6 12;
+  -fx-background-color: #3B82F6;
+  -fx-text-fill: #fff;
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 22;
+  -fx-padding: 8 30;
+  -fx-effect: dropshadow(gaussian,rgba(59,91,165,0.13),8,0,0,2);
+  -fx-cursor: hand;
+  -fx-border-width: 0;
+  -fx-border-color: #335099;
+}
+.profile-button:hover {
+  -fx-background-color: #27407e;
+  -fx-text-fill: #eee;
+  -fx-scale-x: 1.05;
+  -fx-scale-y: 1.05;
 }
 
-/* Ortadaki container */
+/* Logo */
+.app-logo {
+  -fx-padding: 0 20 0 10;
+}
+.logo-image {
+  -fx-stroke: #ddd;
+  -fx-stroke-width: 1;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.17), 4, 0, 0, 1);
+}
+
+/* Ortadaki İçerik */
 .center-content {
   -fx-background-color: transparent;
-  -fx-padding: 20;
+  -fx-padding: 32;
 }
 
 /* Başlıklar */
 .welcome-label {
-  -fx-font-size: 18px;
-  -fx-text-fill: #111;
+  -fx-font-size: 22px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #1d3557;
 }
 .section-label {
-  -fx-font-size: 16px;
+  -fx-font-size: 18px;
   -fx-font-weight: bold;
-  -fx-text-fill: #111;
+  -fx-text-fill: #1d3557;
+  -fx-padding: 12 0 0 0;
 }
 
-/* Search bar */
+/* Search Bar */
 .search-bar {
-  -fx-padding: 0 0 16 0;
+  -fx-padding: 0 0 18 0;
 }
 .search-bar .text-field {
-  -fx-background-radius: 4;
-  -fx-border-radius: 4;
-  -fx-border-color: #ccc;
-  -fx-padding: 4 8;
+  -fx-background-color: #fff;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: #b5c0d0;
+  -fx-border-width: 1.5;
+  -fx-padding: 8 18;
+  -fx-font-size: 16px;
+  -fx-effect: dropshadow(gaussian,rgba(50,80,150,0.08),10,0,0,2);
+}
+.search-bar .text-field:focused {
+  -fx-border-color: #3B82F6;
+  -fx-effect: dropshadow(gaussian,rgba(50,80,150,0.13),15,0,0,3);
 }
 .search-button {
-  -fx-background-color: #3B5BA5;
-  -fx-text-fill: white;
-  -fx-background-radius: 4;
-  -fx-padding: 4 8;
+  -fx-background-color: #3B82F6;
+  -fx-text-fill: #fff;
+  -fx-background-radius: 12;
+  -fx-font-size: 18px;
+  -fx-padding: 7 20;
+  -fx-effect: dropshadow(gaussian,rgba(59,91,165,0.12),8,0,0,2);
+  -fx-cursor: hand;
+  -fx-border-width: 0;
+}
+.search-button:hover {
+  -fx-background-color: #27407e;
+  -fx-scale-x: 1.06;
+  -fx-scale-y: 1.06;
 }
 
-/* Genel pencere arkaplanı */
+/* Arkaplan */
 .root {
-  -fx-background-color: #f0f2f5;
+  -fx-background-color: #f8fafc;
 }
 
-/* FlowPane içi */
+/* Event Kart Container */
 .event-flowpane {
-  -fx-background-color: white;
-  -fx-padding: 40 40 40 40;
-  -fx-hgap: 80;
+  -fx-background-color: #fff;
+  -fx-padding: 40;
+  -fx-hgap: 60;
   -fx-vgap: 24;
-  -fx-border-color: lightgray;
+  -fx-border-color: #e0e3eb;
   -fx-border-width: 1;
-  -fx-border-radius: 8;
-  -fx-background-radius: 8;
+  -fx-border-radius: 10;
+  -fx-background-radius: 10;
 }
 
 /* ScrollPane’i tamamen şeffaf yap */
-.events-scroll {
+.events-scroll, .events-scroll .viewport, .events-scroll .content {
   -fx-background-color: transparent;
   -fx-border-color: transparent;
   -fx-border-width: 0;
   -fx-padding: 0;
-}
-.events-scroll .viewport {
-  -fx-background-color: transparent;
-  -fx-border-color: transparent;
-  -fx-border-width: 0;
-}
-.events-scroll .content {
-  -fx-background-color: transparent;
 }
 .scroll-bar:vertical,
 .scroll-bar:horizontal {
   -fx-background-color: transparent;
   -fx-padding: 0;
   -fx-background-insets: 0;
-}
-.app-logo {
-  -fx-padding: 0 20 0 10; /* sağa 20, sola 10px boşluk */
-}
-
-.logo-image {
-  -fx-stroke: #ddd;
-  -fx-stroke-width: 1;
-  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 1);
 }

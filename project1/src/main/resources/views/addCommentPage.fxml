@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project1.AddCommentController"
+      spacing="10"
+      alignment="TOP_LEFT"
+      styleClass="root"
+      stylesheets="@../style/addCommentPage.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <children>
+        <!-- Top bar: Back button -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <children>
+                <Button fx:id="backButton" id="backButton" text="← Back" onAction="#handleBack" />
+            </children>
+        </HBox>
+
+        <Label fx:id="eventNameLabel" id="eventNameLabel" text="Event Name" styleClass="title-label" />
+
+        <!-- User info label (name, role, ID) -->
+        <Label fx:id="userInfoLabel"
+               styleClass="user-info-label"
+               text="User Name – Role – ID" />
+
+        <!-- Star rating placeholder -->
+        <HBox fx:id="starsBox"
+              id="starsBox"
+              spacing="5"
+              alignment="CENTER_LEFT" />
+
+        <!-- Comment text area -->
+        <TextArea fx:id="commentTextArea"
+                  id="commentTextArea"
+                  promptText="Write your comment..."
+                  prefRowCount="5"
+                  wrapText="true" />
+
+        <!-- Submit button -->
+        <Button fx:id="submitButton"
+                id="submitButton"
+                text="Add Comment"
+                onAction="#handleSubmit" />
+    </children>
+</VBox>

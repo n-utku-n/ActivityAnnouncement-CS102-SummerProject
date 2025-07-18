@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    Yorum Kartı
+    Gösterilen alanlar:
+      Ad Soyad (üst sol)
+      Rating yıldızları (üst sağ)
+      Öğrenci numarası (2. satır)
+      Rol (3. satır)
+      Tarih (4. satır)
+      Yorum metni (5. satır)
+-->
+<GridPane fx:id="root" xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.project1.CommentCardController"
+          hgap="8" vgap="4"
+          styleClass="comment-card"
+          prefWidth="600"
+          maxWidth="Infinity">
+
+   <columnConstraints>
+    <ColumnConstraints hgrow="ALWAYS" percentWidth="100"/>
+    <ColumnConstraints hgrow="NEVER"/>
+</columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+    </rowConstraints>
+
+    <!-- Ad Soyad (Sol üst) -->
+    <Label GridPane.rowIndex="0" GridPane.columnIndex="0"
+           fx:id="userNameLabel"
+           text="Ad Soyad"
+           styleClass="comment-fullname"/>
+
+    <!-- Rating Yıldızlar (Sağ üst) -->
+    <HBox GridPane.rowIndex="0" GridPane.columnIndex="1"
+          fx:id="starsBox"
+          translateX="-100"
+          spacing="2"
+          alignment="CENTER_RIGHT"
+          styleClass="comment-stars">
+    </HBox>
+
+    <!-- Öğrenci Numarası -->
+    <Label GridPane.rowIndex="2" GridPane.columnIndex="0"
+           fx:id="studentNoLabel"
+           text="Öğrenci No"
+           styleClass="comment-studentno"
+           GridPane.columnSpan="2"/>
+
+    <!-- Rol -->
+    <Label GridPane.rowIndex="1" GridPane.columnIndex="0"
+           fx:id="roleLabel"
+           text="Rol"
+           styleClass="comment-role"
+           GridPane.columnSpan="2"/>
+
+    <!-- Zaman -->
+    <Label GridPane.rowIndex="3" GridPane.columnIndex="0"
+           fx:id="timeLabel"
+           text="2025-07-17 18:00"
+           styleClass="comment-time"
+           GridPane.columnSpan="2"/>
+
+    <!-- Yorum Metni -->
+    <Label GridPane.rowIndex="4" GridPane.columnIndex="0"
+           fx:id="commentTextLabel"
+           text="Yorum metni burada..."
+           wrapText="true"
+           maxWidth="580"
+           styleClass="comment-text"
+           GridPane.columnSpan="2"/>
+
+    <!-- Edit / Delete Butonları -->
+    <HBox fx:id="actionsBox" GridPane.rowIndex="0" GridPane.columnIndex="1"
+          translateX="-210"
+          alignment="TOP_RIGHT"
+          spacing="6"
+          visible="false"
+          managed="false">
+        <Button fx:id="editButton" text="Edit" onAction="#handleEdit" styleClass="edit-button" />
+        <Button fx:id="deleteButton" text="Delete" onAction="#handleDelete" styleClass="delete-button" />
+    </HBox>
+
+    <padding>
+        <Insets top="12" right="16" bottom="12" left="16"/>
+    </padding>
+</GridPane>

@@ -1,0 +1,57 @@
+/* Root container */
+.root {
+    -fx-background-color: linear-gradient(to bottom, #F9F9F9, #E5E5E5);
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Title label */
+.label.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 0 10 0;
+}
+
+/* User info label */
+.label.user-info-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #0e0d0d;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Stars / Rating row */
+#starsBox {
+    -fx-spacing: 8px;
+    -fx-padding: 8px 0;
+}
+
+/* Comment text area */
+#commentTextArea {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-focus-color: #007AFF;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Buttons */
+#backButton, #submitButton {
+    -fx-background-color: white;
+    -fx-text-fill: #007AFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+#backButton:hover, #submitButton:hover {
+    -fx-background-color: #F5F5F5;
+}
+
+#backButton:pressed, #submitButton:pressed {
+    -fx-background-color: #E5E5E5;
+}

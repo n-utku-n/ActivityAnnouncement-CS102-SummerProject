@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.project1.CommentsController"
+      spacing="16"
+      prefWidth="640"
+      prefHeight="480"
+      stylesheets="@../style/comments.css,@../style/comment_card.css"
+      styleClass="comments-root">
+
+    <!-- Header: Back Button + Event Name -->
+    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="comments-header">
+        <Button fx:id="backButton"
+                text="Back"
+                onAction="#handleBack"
+                styleClass="back-button"/>
+        <Label fx:id="eventNameLabel"
+               text="Event Name"
+               styleClass="comments-event-name"/>
+    </HBox>
+
+    <!-- Subheading -->
+    <Label text="Comments" styleClass="comments-subtitle"/>
+
+    <!-- Average Stars -->
+    <HBox fx:id="averageStarsBox"
+          alignment="CENTER_RIGHT"
+          spacing="2"
+          styleClass="comments-average-box">
+    </HBox>
+
+    <!-- Comment Cards Scroll Area -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="comments-scroll">
+        <content>
+            <VBox fx:id="commentsContainer"
+                  spacing="8"
+                  prefWidth="620"
+                  styleClass="comments-container">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <!-- Separator -->
+    <Separator/>
+
+    <!-- Add Comment Section -->
+    <HBox spacing="8" alignment="CENTER_RIGHT" styleClass="add-comment-box">
+        <Button fx:id="addCommentButton"
+                text="Add Comment"
+                onAction="#handleAddComment"
+                styleClass="add-comment-button"/>
+    </HBox>
+
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+</VBox>

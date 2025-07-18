@@ -101,11 +101,21 @@
       <!-- After injection, ensure controller clips clubLogo to a circle: -->
     </VBox>
 
-    <!-- Katıl butonu (henüz handler eklemediysen onAction’ı kaldırdım) -->
-    <HBox alignment="CENTER">
+    <!-- Katıl ve Yorumlar butonları -->
+    <HBox alignment="CENTER" spacing="8">
       <Button fx:id="joinButton"
               text="Join"
+              onAction="#onJoinClicked"
               styleClass="join-button">
+        <VBox.margin>
+          <Insets bottom="30"/>
+        </VBox.margin>
+      </Button>
+      <Button fx:id="commentsButton"
+              text="Comments"
+              onAction="#onCommentsClicked"
+              styleClass="join-button"
+              visible="false" managed="false">
         <VBox.margin>
           <Insets bottom="30"/>
         </VBox.margin>

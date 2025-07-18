@@ -34,11 +34,7 @@
     -fx-background-color: #E0E7FF;
 }
 
-.event-title {
-    -fx-fill: #1E3A8A;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-}
+
 
 .scroll-pane {
     -fx-background-color: transparent;
@@ -99,9 +95,10 @@
     -fx-faint-focus-color: transparent;
 }
 
-/* Increase font sizes and padding for detail view */
 .event-title {
-    -fx-font-size: 24px;     /* larger title font */
+    -fx-fill: #1E3A8A;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
 }
 .scroll-pane .viewport > VBox > Text {
     -fx-font-size: 14px;     /* slightly larger description text */
@@ -114,9 +111,33 @@
 }
 #minParticipantLine {
     -fx-translate-y: 0;
+    -fx-fill: #EF4444;
+    -fx-width: 2px;
+    -fx-height: 16px;
 }
 
 /* Make injected club logo circular */
 .club-logo {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+.comment-button {
+    -fx-background-color: #10B981; /* Yeşil ton – katıldım */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 24px;
+    -fx-padding: 12px 32px;
+    -fx-cursor: hand;
+}
+.comment-button:hover {
+    -fx-background-color: #059669;
+}
+.comment-time {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7280; /* gri */
+    -fx-font-style: italic;
+}
+.comment-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-background-color: #F9FAFB;
 }

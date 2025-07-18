@@ -66,7 +66,6 @@ public class MainDashboardController {
         //uploadDummyEventsToFirestore(); // sadece ilk test için
         //loadDummyEvents(); // kapalı kalsın
         loadAppLogo(); 
-        loadEvents(); 
 
          Platform.runLater(() -> {
             Stage stage = (Stage) mainEventContainer.getScene().getWindow();
@@ -74,6 +73,16 @@ public class MainDashboardController {
             // eğer gerçekten tam ekran istersen:
             // stage.setFullScreen(true);
         }); 
+    }
+    private UserModel loggedInUser;
+
+    /**
+     * SignInController’dan geçirilen UserModel’i saklar
+     * ve UI’yı günceller (\"Hoş geldin Serra\" gibi).
+     */
+    public void setLoggedInUser(UserModel user) {
+        this.loggedInUser = user;
+        loadEvents();
     }
     private void loadAppLogo() {
         // Load logos from application resources instead of Firebase
@@ -111,10 +120,18 @@ public class MainDashboardController {
             Map<String, Object> data = doc.getData();
             System.out.println("🎯 İşleniyor: eventId=" + eventId);
 
+            // Show only events whose eventDate has not passed
+            com.google.cloud.Timestamp ts = doc.getTimestamp("eventDate");
+            if (ts != null && ts.toDate().before(new Date())) {
+                System.out.println("⌛ Event date passed, skipping: eventId=" + eventId);
+                continue;
+            }
+
             // 1) FXML + Controller
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
             VBox eventCard = loader.load();
             EventCardController controller = loader.getController();
+            controller.setCurrentUser(loggedInUser);
             System.out.println("   🔗 FXML yüklendi ve controller bağlandı.");
 
             // 2) Kulüp adı & logo

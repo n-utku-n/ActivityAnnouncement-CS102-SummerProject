@@ -45,6 +45,7 @@ public class EventDetailAdminController {
 
     private String eventId;
     private String clubId;
+    
 
     /**
      * Sets the event data and populates the UI fields accordingly.

@@ -134,6 +134,12 @@ private void initialize() {
             e.printStackTrace();
         }
     }
+    private UserModel loggedInUser;
+    public void setLoggedInUser(UserModel user) {
+        this.loggedInUser = user;
+        // Örnek: admin ismini UI’da gösterin
+        // adminLabel.setText("Admin: " + user.getName());
+    }
 
      /**
      * Loads and displays all events from Firestore.

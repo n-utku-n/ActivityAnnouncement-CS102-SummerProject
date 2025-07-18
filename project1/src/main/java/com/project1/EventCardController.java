@@ -30,6 +30,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import com.project1.UserModel;
+import com.project1.EventDetailController;
+
 /**
  * Controller for the event card UI component.
  * Displays brief information about an event and allows users
@@ -85,6 +88,9 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
 
     @FXML 
     private ImageView clubLogo;
+
+    private UserModel currentUser;
+    public void setCurrentUser(UserModel user) { this.currentUser = user; }
 
 
 
@@ -450,6 +456,7 @@ private void populateParticipantInfo(Map<String, Object> data) {
 
         // Veriyi aktar
         EventDetailController controller = loader.getController();
+        controller.setLoggedInUser(currentUser);
         controller.setEventData(eventId, eventData);
 
         // Mevcut sahneyi al ve mevcut Scene'i kullanarak root'u değiştir

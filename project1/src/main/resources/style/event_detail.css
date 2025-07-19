@@ -141,3 +141,19 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
     -fx-background-color: #F9FAFB;
 }
+.quit-button {
+    -fx-background-color: #EF4444; /* Koyu kırmızı */
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-font-size: 16px;
+    -fx-background-radius: 24px;
+    -fx-padding: 12px 32px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.5), 6, 0, 0, 2);
+    -fx-transition: background-color 0.3s ease;
+}
+
+.quit-button:hover {
+    -fx-background-color: #DC2626; /* Biraz daha koyu hover rengi */
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.7), 8, 0, 0, 3);
+}

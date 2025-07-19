@@ -56,7 +56,7 @@ public class MainDashboardController {
     
      @FXML
     private FlowPane mainEventContainer;// VBox yerine FlowPane
-
+    
 
 
 
@@ -97,8 +97,9 @@ private void handleSearch(ActionEvent event) {
         for (com.google.cloud.firestore.QueryDocumentSnapshot doc : documents) {
             String name = doc.getString("name");
             String desc = doc.getString("description");
+               String clubName = doc.getString("clubName");  // kulüp adı da arama kriterine eklendi
             if ((name != null && name.toLowerCase().contains(keyword)) ||
-                (desc != null && desc.toLowerCase().contains(keyword))) {
+                (desc != null && desc.toLowerCase().contains(keyword)) || (clubName != null && clubName.toLowerCase().contains(keyword))) {
 
                 // Event kartı oluştur
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
@@ -246,16 +247,25 @@ private void handleSearch(ActionEvent event) {
 }
 
 
-    /**
-     * TODO: not implemented
-     * @author Utku
-     */
-    @FXML
-    private void handleProfile(ActionEvent event) {
-        // Navigate to the profile view using SceneChanger
-        SceneChanger.switchScene(event, "profile.fxml");
-    }
+ 
+   @FXML
+private void onProfileButtonClicked(ActionEvent event) {
+    SceneChanger.switchScene(event, "profile.fxml", controller -> {
+        if (controller instanceof ProfileController pc) {
+            pc.setUser(loggedInUser);
+        }
+    });
+}
 
+public void setUser(UserModel user) {
+
+    this.loggedInUser = user;
+  
+    // Burası önemli: Eventleri yeniden yükle!
+    loadEvents();
+   
+}
+   
     private void loadAllEvents() {
     eventCardContainer.getChildren().clear();
 

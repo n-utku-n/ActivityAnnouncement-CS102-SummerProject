@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import io.grpc.alts.internal.TsiFrameProtector.Consumer;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -34,6 +35,34 @@ public class SceneChanger {
             FXMLLoader loader = new FXMLLoader(SceneChanger.class.getResource("/views/" + fxmlFileName.trim()));
 
             Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = stage.getScene();
+            if (scene == null) {
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                scene.setRoot(root);
+            }
+            return loader;
+
+        } catch (Exception e) {
+            System.out.println("❌ Sahne geçişinde hata: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+        public static FXMLLoader switchScene(ActionEvent event, String fxmlFileName, Consumer<Object> controllerConsumer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(SceneChanger.class.getResource("/views/" + fxmlFileName.trim()));
+
+            Parent root = loader.load();
+
+            if (controllerConsumer != null) {
+                Object controller = loader.getController();
+                controllerConsumer.accept(controller);
+            }
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = stage.getScene();
             if (scene == null) {

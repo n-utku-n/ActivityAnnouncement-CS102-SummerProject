@@ -43,7 +43,11 @@ public class ClubCardController {
 
     /** Event ID to return to when opening club profile */
     private String previousEventId;
+    private UserModel currentUser;
 
+    public void setCurrentUser(UserModel user) {
+        this.currentUser = user;
+}
     /**
      * Populates the card UI with the given club data.
      *
@@ -104,6 +108,7 @@ public class ClubCardController {
         if (loader != null) {
             ClubProfileController controller = loader.getController();
             controller.setClubContext(clubId, previousEventId);
+            controller.setCurrentUser(currentUser); 
         }
     }
 

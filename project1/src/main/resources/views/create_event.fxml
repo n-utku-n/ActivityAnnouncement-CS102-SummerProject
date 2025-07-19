@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.collections.ObservableList?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.project1.CreateEventController"
+            stylesheets="@/style/create_event.css">
+
+  <!-- Üst çubuk: Başlık + Geri butonu -->
+  <top>
+    <ToolBar>
+      <Button text="Back" onAction="#handleBack"/>
+      <Label text="Create New Event" styleClass="header-label"/>
+    </ToolBar>
+  </top>
+
+  <!-- Ana form -->
+  <center>
+    <ScrollPane fitToWidth="true">
+      <VBox spacing="15" style="-fx-padding: 20;">
+
+        <!-- Event adı -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <Label text="Event Name:" minWidth="120"/>
+          <TextField fx:id="nameField" promptText="e.g. Tech Talk 2025" />
+        </HBox>
+
+        <!-- Event tipi -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <Label text="Event Type:" minWidth="120"/>
+          <ChoiceBox fx:id="typeChoice">
+            <items>
+              <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Workshop"/>
+                <String fx:value="Seminar"/>
+                <String fx:value="Hackathon"/>
+                <String fx:value="Meeting"/>
+                <String fx:value="Other"/>
+              </FXCollections>
+            </items>
+          </ChoiceBox>
+        </HBox>
+
+        <!-- Tarih ve Saat -->
+        <HBox spacing="10">
+          <Label text="Date:" minWidth="120"/>
+          <DatePicker fx:id="datePicker"/>
+          <Label text="Time:" minWidth="60"/>
+          <Spinner fx:id="hourSpinner" prefWidth="70" />
+          <Spinner fx:id="minuteSpinner" prefWidth="70" />
+        </HBox>
+
+        <!-- Yer (Location) -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <Label text="Location:" minWidth="120"/>
+          <TextField fx:id="locationField" promptText="e.g. Bilkent EE-01"/>
+        </HBox>
+
+        <!-- Min / Max Katılımcı -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <Label text="Min Participants:" minWidth="120"/>
+          <Spinner fx:id="minPartSpinner" prefWidth="80"/>
+          <Label text="Max Participants:" minWidth="120"/>
+          <Spinner fx:id="maxPartSpinner" prefWidth="80"/>
+        </HBox>
+
+        <!-- Açıklama (Description) -->
+        <VBox spacing="5">
+          <Label text="Description:"/>
+          <TextArea fx:id="descriptionArea" prefRowCount="4" wrapText="true"/>
+        </VBox>
+
+        <!-- Poster Yükleme -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+          <Label text="Event Poster:" minWidth="120"/>
+          <Button text="Choose Image…" onAction="#handleChooseImage"/>
+          <Label fx:id="posterPathLabel" text="(no file)" wrapText="true"/>
+        </HBox>
+
+      </VBox>
+    </ScrollPane>
+  </center>
+
+  <!-- Alt çubuk: Kaydet / İptal -->
+  <bottom>
+    <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+      <Button text="Cancel" onAction="#handleBack"/>
+      <Button text="Create" fx:id="createButton" onAction="#handleCreateEvent" defaultButton="true"/>
+    </HBox>
+  </bottom>
+</BorderPane>

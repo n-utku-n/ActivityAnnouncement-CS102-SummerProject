@@ -86,8 +86,16 @@ public class ClubProfileController {
     /** Event ID to return to when clicking Back */
     private String previousEventId;
 
+
+    private UserModel currentUser;
+
+    public void setCurrentUser(UserModel user) {
+        this.currentUser = user;
+    }
+
     @FXML
     public void initialize() {
+      
         clubLogo.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.windowProperty().addListener((obs2, oldWindow, newWindow) -> {
@@ -208,6 +216,7 @@ public class ClubProfileController {
                         FXMLLoader loaderClub = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
                         VBox clubCard = loaderClub.load();
                         EventCardController clubCtrl = loaderClub.getController();
+                        clubCtrl.setCurrentUser(currentUser);
                         clubCtrl.setData(doc.getId(), doc.getData());
                         eventListContainer.getChildren().add(clubCard);
 
@@ -217,6 +226,7 @@ public class ClubProfileController {
                             FXMLLoader loaderActive = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
                             VBox activeCard = loaderActive.load();
                             EventCardController activeCtrl = loaderActive.getController();
+                            activeCtrl.setCurrentUser(currentUser);
                             activeCtrl.setData(doc.getId(), doc.getData());
                             eventCardContainer.getChildren().add(activeCard);
                         }
@@ -238,18 +248,18 @@ public class ClubProfileController {
     @FXML
     private void handleBack(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
-            Parent detailRoot = loader.load();
-            EventDetailController detailCtrl = loader.getController();
-            // Pass the previous event ID if available
-            if (previousEventId != null && !previousEventId.trim().isEmpty()) {
-                detailCtrl.setEventId(previousEventId);
-            }
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(detailRoot));
-            stage.setMaximized(true); 
-        } catch (IOException e) {
-            e.printStackTrace();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
+        Parent detailRoot = loader.load();
+        EventDetailController detailCtrl = loader.getController();
+        if (previousEventId != null && !previousEventId.trim().isEmpty()) {
+            detailCtrl.setLoggedInUser(this.currentUser); // <-- BUNU EKLE!
+            detailCtrl.setEventId(previousEventId);
         }
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(detailRoot));
+        stage.setMaximized(true);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     }
 }

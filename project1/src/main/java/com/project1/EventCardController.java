@@ -109,9 +109,11 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
    @FXML
     private void onCardClicked(MouseEvent event) {
         System.out.println("📦 Event card clicked!");
-        if (eventId != null && eventData != null) {
-            navigateToEventDetail();
-        }
+    if (eventId != null && eventData != null && currentUser != null) {
+        navigateToEventDetail();
+    } else {
+        System.err.println("❌ EventCardController: Eksik veri! eventId, eventData veya currentUser null.");
+    }
     }
 
     /** Firestore event document ID */
@@ -491,17 +493,29 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     /**
      * Navigate to event detail page
      */
-   private void navigateToEventDetail() {
+ private void navigateToEventDetail() {
+    if (currentUser == null) {
+        System.err.println("❌ [EventCardController] Kullanıcı null, event detayına geçilemiyor!");
+        return;
+    }
+
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
         Parent root = loader.load();
 
-        // Veriyi aktar
+        // EventDetailController'a kullanıcı bilgisini aktar
         EventDetailController controller = loader.getController();
-        controller.setLoggedInUser(currentUser);
+        controller.setLoggedInUser(currentUser);        // HER ZAMAN USERMODELİ SET ET
+        controller.setEventData(eventId, eventData); 
+        if (currentUser != null) {
+            controller.setLoggedInUser(currentUser);
+        } else {
+            System.err.println("❌ currentUser null, EventDetailController’a gönderilemedi!");
+            return; 
+        }
+        
         controller.setEventData(eventId, eventData);
 
-        // Mevcut sahneyi al ve mevcut Scene'i kullanarak root'u değiştir
         Stage stage = (Stage) eventCardRoot.getScene().getWindow();
         Scene scene = stage.getScene();
         if (scene == null) {

@@ -83,11 +83,14 @@ public class CommentsController {
         this.currentUserId = user.getStudentId();
     }
 
-    @FXML
+   @FXML
     private void handleBack(ActionEvent e) {
+        if (currentUser == null) {
+            System.err.println("⚠️ Yorum ekleyemezsin, kullanıcı null!");
+            return;
+        }
         FXMLLoader loader = SceneChanger.switchScene(e, "event_detail.fxml");
         EventDetailController edc = loader.getController();
-        // Pass along the same user and event context
         edc.setLoggedInUser(currentUser);
         edc.setEventId(eventId);
     }
@@ -100,22 +103,11 @@ public class CommentsController {
             Parent root = loader.load();
             AddCommentController acc = loader.getController();
 
-            // 1) Eğer currentUser doluysa onu kullan, değilse fallback oluştur
-            UserModel userModel;
-            if (currentUser != null) {
-                userModel = currentUser;
-            } else {
-                String sid = (currentUserId != null && !currentUserId.isBlank())
-                             ? currentUserId
-                             : currentUserDisplayName;
-                userModel = new UserModel(
-                    currentUserDisplayName,  // name
-                    "",                      // surname
-                    sid,                     // studentId
-                    "",                      // email
-                    ""                       // role
-                );
-            }
+            // Her zaman güncel user model aktar
+            UserModel userModel = (currentUser != null) ? currentUser :
+                new UserModel(currentUserDisplayName, "", 
+                    (currentUserId != null && !currentUserId.isBlank() ? currentUserId : ""),
+                    "", "");
 
             acc.setCurrentUser(userModel);
             acc.setEventContext(eventId, eventName);
@@ -180,13 +172,13 @@ public class CommentsController {
 
     private void renderComments(List<CommentRecord> comments) {
         averageStarsBox.getChildren().clear();
-    double avg = comments.stream().mapToDouble(cr -> cr.rating).average().orElse(0.0);
-    int full = (int)Math.round(avg);
-    for (int i = 0; i < 5; i++) {
-        Label star = new Label(i < full ? "★" : "☆");
-        star.getStyleClass().add("comments-average-star"); // BURAYA EKLE!
-        averageStarsBox.getChildren().add(star);
-    }
+        double avg = comments.stream().mapToDouble(cr -> cr.rating).average().orElse(0.0);
+        int full = (int)Math.round(avg);
+        for (int i = 0; i < 5; i++) {
+            Label star = new Label(i < full ? "★" : "☆");
+            star.getStyleClass().add("comments-average-star");
+            averageStarsBox.getChildren().add(star);
+        }
         commentsContainer.getChildren().clear();
         if (comments.isEmpty()) {
             commentsContainer.getChildren().add(new Label("No comments yet."));
@@ -195,37 +187,42 @@ public class CommentsController {
                 commentsContainer.getChildren().add(buildCommentCard(cr))
             );
         }
-
-        boolean has = comments.stream()
-            .anyMatch(c -> c.userName.equalsIgnoreCase(currentUserDisplayName));
+        // YORUM ENGELİNİ studentNo'ya göre yap!
+        boolean has = comments.stream().anyMatch(c ->
+            c.studentNo != null &&
+            currentUserId != null &&
+            c.studentNo.equals(currentUserId)
+        );
         addCommentButton.setManaged(!has);
         addCommentButton.setVisible(!has);
     }
 
-   private javafx.scene.Node buildCommentCard(CommentRecord cr) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/comment_card.fxml"));
-        Parent card = loader.load();
-        CommentCardController ctrl = loader.getController();
-        ctrl.setData(
-            cr.id,
-            cr.eventId,
-            cr.userName,
-            cr.studentNo,
-            cr.role,
-            cr.text,
-            (int)cr.rating,
-            cr.timestamp,
-            currentUserDisplayName
-        );
-        // -> Callback ekle:
-        ctrl.setRefreshCommentsCallback(this::loadCommentsAsync);
-        return new VBox(card);
-    } catch (IOException e) {
-        e.printStackTrace();
-        return new Label("Error loading comment");
+    private javafx.scene.Node buildCommentCard(CommentRecord cr) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/comment_card.fxml"));
+            Parent card = loader.load();
+            CommentCardController ctrl = loader.getController();
+            ctrl.setData(
+                cr.id,
+                cr.eventId,
+                cr.userName,
+                cr.studentNo,
+                cr.role,
+                cr.text,
+                (int)cr.rating,
+                cr.timestamp,
+                currentUserDisplayName
+            );
+            ctrl.setCurrentUserId(currentUserId);
+            ctrl.setRefreshCommentsCallback(this::loadCommentsAsync);
+            // Eğer CommentCardController içinde UserModel'e ihtiyaç varsa burada iletebilirsin!
+            // ctrl.setCurrentUser(currentUser);
+            return new VBox(card);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Label("Error loading comment");
+        }
     }
-}
 
     private static final class CommentRecord {
         final String id, eventId, userName, text, userPhotoUrl, studentNo, role;

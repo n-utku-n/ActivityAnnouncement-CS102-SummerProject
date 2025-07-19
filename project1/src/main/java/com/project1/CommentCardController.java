@@ -45,11 +45,17 @@ public class CommentCardController {
     private String currentUserName;
     private Timestamp timestamp;
     private Runnable refreshCommentsCallback;
+    private String currentUserId;
 
 public void setRefreshCommentsCallback(Runnable callback) {
     this.refreshCommentsCallback = callback;
 }
 
+
+    public void setCurrentUserId(String userId) {
+        this.currentUserId = userId;
+        updateActionsVisibility(); // UserId ayarlanınca visibility güncelle
+    }
     
 
     private static final DateTimeFormatter TS_FMT =
@@ -150,13 +156,18 @@ private void handleDelete(ActionEvent e) {
     }
 }
 
-   private void updateActionsVisibility() {
-    boolean show = currentUserName != null &&
-                   userName != null &&
-                   currentUserName.trim().equalsIgnoreCase(userName.trim());
-    actionsBox.setVisible(show);
-    actionsBox.setManaged(show);
-}
+ private void updateActionsVisibility() {
+        boolean show = false;
+        // En güvenlisi studentNo ile kıyasla:
+        if (currentUserId != null && studentNumber != null) {
+            show = currentUserId.trim().equals(studentNumber.trim());
+        } else if (currentUserName != null && userName != null) {
+            // Eski yol (isimle kontrol)
+            show = currentUserName.trim().equalsIgnoreCase(userName.trim());
+        }
+        actionsBox.setVisible(show);
+        actionsBox.setManaged(show);
+    }
 
     public String getCommentId() { return commentId; }
     public String getEventId() { return eventId; }
@@ -172,5 +183,6 @@ private void handleDelete(ActionEvent e) {
         if (deleteButton != null) {
             deleteButton.setTooltip(new Tooltip("Yorumu sil"));
         }
+        updateActionsVisibility();
     }
 }

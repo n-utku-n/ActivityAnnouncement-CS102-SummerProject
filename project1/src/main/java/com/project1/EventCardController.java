@@ -2,7 +2,7 @@ package com.project1;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-// width listener’ı tutmak için
+// width listener'ı tutmak için
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
@@ -20,12 +20,15 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
+import java.util.concurrent.CompletableFuture;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -68,8 +71,11 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     @FXML 
     private Label currentParticipantsText;
 
-    @FXML 
+    @FXML
     private Label maxParticipantsText;
+
+    @FXML
+    private Label eventFullLabel;
 
     @FXML 
     private Label eventName;
@@ -82,6 +88,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     private Label ratingStarsLabel;
     @FXML
     private Label ratingValueLabel;
+
 
     // REMOVED: eventDateText is no longer in the design
     // @FXML
@@ -96,6 +103,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     @FXML 
     private ImageView clubLogo;
 
+    private boolean isEditMode = false;
     private UserModel currentUser;
     public void setCurrentUser(UserModel user) { this.currentUser = user; }
 
@@ -107,14 +115,16 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
      * @author Serra
      */
    @FXML
-    private void onCardClicked(MouseEvent event) {
-        System.out.println("📦 Event card clicked!");
+private void onCardClicked(MouseEvent event) {
+   
+    System.out.println("📦 Event card clicked!");
+    
     if (eventId != null && eventData != null && currentUser != null) {
         navigateToEventDetail();
     } else {
-        System.err.println("❌ EventCardController: Eksik veri! eventId, eventData veya currentUser null.");
+        System.err.println("❌ EventCardController: Missing data! eventId, eventData or currentUser is null.");
     }
-    }
+}
 
     /** Firestore event document ID */
     private String eventId;
@@ -148,6 +158,11 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
 
         this.eventId = eventId;
         this.eventData = data;
+        // Ensure eventFullLabel is hidden by default before populating
+        if (eventFullLabel != null) {
+            eventFullLabel.setVisible(false);
+            eventFullLabel.setManaged(false);
+        }
 
         // Set event title and organizing club name
         populateEventDetails(data);
@@ -158,6 +173,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
         // Load images
         loadImages(data);
         showAverageRating(data);
+        // Show "Event Full" if participants reached max (done inside populateParticipantInfo)
     }
 
     private void showAverageRating(Map<String, Object> data) {
@@ -245,6 +261,12 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
             clubLogo = (ImageView) eventCardRoot.lookup("#clubLogo");
             System.out.println("🔁 lookup clubLogo: " + (clubLogo != null));
         }
+
+        if (eventFullLabel == null) {
+            eventFullLabel = (Label) eventCardRoot.lookup("#eventFullLabel");
+            System.out.println("🔁 lookup eventFullLabel: " + (eventFullLabel != null));
+        }
+
     }
 
     /**
@@ -315,97 +337,85 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     /**
      * Populate participant information and progress bar
      */
-  /**
- * Populate participant information and progress bar
- */
     private void populateParticipantInfo(Map<String, Object> data) {
-    int current = 0, min = 0, max = 100;
-    try {
-        Object o;
-        if (data.get("participants") instanceof java.util.List) {
-            current = ((java.util.List<?>) data.get("participants")).size();
-        } else if ((o = data.get("currentParticipants")) != null) {
-            current = ((Number)o).intValue();
+        int current = 0, min = 0, max = 100;
+        try {
+            Object o;
+            if (data.get("participants") instanceof java.util.List) {
+                current = ((java.util.List<?>) data.get("participants")).size();
+            } else if ((o = data.get("currentParticipants")) != null) {
+                current = ((Number)o).intValue();
+            }
+            if ((o = data.get("minParticipants")) != null) min = ((Number)o).intValue();
+            if ((o = data.get("maxParticipants")) != null) max = ((Number)o).intValue();
+        } catch (Exception e) {
+            System.out.println("⚠️ Error parsing participant numbers: " + e.getMessage());
         }
-        if ((o = data.get("minParticipants")) != null) min = ((Number)o).intValue();
-        if ((o = data.get("maxParticipants")) != null) max = ((Number)o).intValue();
-    } catch (Exception e) {
-        System.out.println("⚠️ Error parsing participant numbers: " + e.getMessage());
-    }
 
-    participantBar.setProgress(max > 0 ? (double) current / max : 0);
+        participantBar.setProgress(max > 0 ? (double) current / max : 0);
 
-    final int finalMin = min;
-    final int finalMax = max;
-    Platform.runLater(() -> {
-        double barWidth = participantBar.getWidth();
-        double lineWidth = minParticipantLine.getWidth();
-        double lineCenterOffset = lineWidth / 2;
+        final int finalMin = min;
+        final int finalMax = max;
+        Platform.runLater(() -> {
+            double barWidth = participantBar.getWidth();
+            double lineWidth = minParticipantLine.getWidth();
+            double lineCenterOffset = lineWidth / 2;
 
-        if (barWidth < 2 || lineWidth < 1) {
-            Platform.runLater(() -> {
-                double retryWidth = participantBar.getWidth();
-                double retryLineWidth = minParticipantLine.getWidth();
-                double retryCenterOffset = retryLineWidth / 2;
-                double ratio = finalMax > 0 ? (double) finalMin / finalMax : 0;
+            if (barWidth < 2 || lineWidth < 1) {
+                Platform.runLater(() -> {
+                    double retryWidth = participantBar.getWidth();
+                    double retryLineWidth = minParticipantLine.getWidth();
+                    double retryCenterOffset = retryLineWidth / 2;
+                    double ratio = finalMax > 0 ? (double) finalMin / finalMax : 0;
 
+                    if (finalMin <= 0 || finalMin >= finalMax) {
+                        minParticipantLine.setOpacity(0);
+                    } else {
+                        double translateX = (retryWidth * ratio) - retryCenterOffset;
+                        minParticipantLine.setTranslateX(translateX);
+                        minParticipantLine.setOpacity(1);
+                    }
+                });
+            } else {
+                double minRatio = finalMax > 0 ? (double) finalMin / finalMax : 0;
                 if (finalMin <= 0 || finalMin >= finalMax) {
                     minParticipantLine.setOpacity(0);
                 } else {
-                    double translateX = (retryWidth * ratio) - retryCenterOffset;
+                    double translateX = (barWidth * minRatio) - lineCenterOffset;
                     minParticipantLine.setTranslateX(translateX);
                     minParticipantLine.setOpacity(1);
                 }
-            });
-        } else {
-            double minRatio = finalMax > 0 ? (double) finalMin / finalMax : 0;
-            if (finalMin <= 0 || finalMin >= finalMax) {
-                minParticipantLine.setOpacity(0);
-            } else {
-                double translateX = (barWidth * minRatio) - lineCenterOffset;
-                minParticipantLine.setTranslateX(translateX);
-                minParticipantLine.setOpacity(1);
             }
-        }
-    });
+        });
 
-    currentParticipantsText.setText(String.valueOf(current));
-    maxParticipantsText.setText(String.valueOf(max));
-}
+        currentParticipantsText.setText(String.valueOf(current));
+        maxParticipantsText.setText(String.valueOf(max));
+
+        // Show "Event Full" label if at capacity
+        boolean isFull = current >= max;
+        if (eventFullLabel != null) {
+            eventFullLabel.setVisible(isFull);
+            eventFullLabel.setManaged(isFull);
+        }
+    }
     /**
      * Position the red minimum participant line on the progress bar
      */
     private void positionMinParticipantLine(int min, int max) {
         if (max > 0 && min <= max && minParticipantLine != null && participantBar != null) {
-            javafx.application.Platform.runLater(() -> {
+            Platform.runLater(() -> {
                 try {
                     // Force layout calculation
                     participantBar.applyCss();
                     participantBar.layout();
 
                     double barWidth = participantBar.getWidth();
-                    System.out.println("📏 participantBar width: " + barWidth);
-
                     if (barWidth > 0) {
                         double ratio = (double) min / max;
                         double lineCenterOffset = minParticipantLine.getWidth() / 2;
                         double translateX = (barWidth * ratio) - lineCenterOffset;
-
-                        System.out.println("📐 Min line translateX: " + translateX + " (ratio: " + ratio + ")");
-                        
                         minParticipantLine.setTranslateX(translateX);
-                    } else {
-                        System.out.println("⚠️ Progress bar width is 0, will retry positioning");
-                        // Retry after a short delay
-                        javafx.application.Platform.runLater(() -> {
-                            double retryWidth = participantBar.getWidth();
-                            if (retryWidth > 0) {
-                                double ratio = (double) min / max;
-                                double lineCenterOffset = minParticipantLine.getWidth() / 2;
-                                double translateX = (retryWidth * ratio) - lineCenterOffset;
-                                minParticipantLine.setTranslateX(translateX);
-                            }
-                        });
+                        minParticipantLine.setOpacity(1);
                     }
                 } catch (Exception e) {
                     System.out.println("❌ Error positioning min participant line: " + e.getMessage());
@@ -415,6 +425,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
             System.out.println("❌ Cannot position min line - invalid parameters or null components");
         }
     }
+ 
 
     /**
      * Load event and club images
@@ -436,7 +447,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     String logoUrl = (String) data.get("logoUrl");
     System.out.println("🔍 logoUrl from data: " + logoUrl);
 
-    // 2.b) Eğer data’da yoksa Firestore’dan çek
+    // 2.b) Eğer data'da yoksa Firestore'dan çek
     if ((logoUrl == null || logoUrl.isEmpty()) && data.containsKey("clubId")) {
         String clubId = (String) data.get("clubId");
         System.out.println("🔍 Fallback fetching logo for clubId: " + clubId);
@@ -510,7 +521,7 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
         if (currentUser != null) {
             controller.setLoggedInUser(currentUser);
         } else {
-            System.err.println("❌ currentUser null, EventDetailController’a gönderilemedi!");
+            System.err.println("❌ currentUser null, EventDetailController'a gönderilemedi!");
             return; 
         }
         
@@ -539,4 +550,5 @@ private javafx.beans.value.ChangeListener<Number> widthListener;
     private void handleDetails(ActionEvent event) {
         navigateToEventDetail();
     }
+    
 }

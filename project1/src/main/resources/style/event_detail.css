@@ -68,6 +68,39 @@
     -fx-effect: none;
 }
 
+/* Edit and Delete buttons styling for event detail */
+.edit-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #3B82F6; /* blue border */
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #3B82F6;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.edit-button:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.1);
+}
+
+.delete-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #EF4444; /* red border */
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #EF4444;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.delete-button:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+}
+
 .framed-box {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #D1D5DB;

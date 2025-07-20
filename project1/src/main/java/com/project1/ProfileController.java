@@ -1,5 +1,8 @@
 package com.project1;
 
+import com.project1.ClubProfileController;
+import javafx.event.ActionEvent;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +20,10 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.Timestamp;
 import com.google.firebase.cloud.FirestoreClient;
 import java.util.Collections;
+
+import javafx.scene.layout.VBox;
+import com.project1.ClubCardController;
+import javafx.scene.Node;
 
 import java.net.URL;
 import java.util.List;
@@ -38,6 +45,7 @@ public class ProfileController implements Initializable {
 
     @FXML private ScrollPane joinedEventsScrollPane;
     @FXML private GridPane joinedEventsContainer;
+    @FXML private VBox clubCardContainer;
 
     private UserModel loggedInUser;
 
@@ -46,7 +54,7 @@ public class ProfileController implements Initializable {
         backButton.setOnAction(this::handleBackButton);
         if (logOutButton != null) logOutButton.setOnAction(this::handleLogoutButton);
         if (createEventButton != null) createEventButton.setOnAction(this::handleCreateEventButton);
-        //if (editClubButton != null) editClubButton.setOnAction(this::handleEditClubButton);
+        if (editClubButton != null) editClubButton.setOnAction(this::handleEditClubButton);
     }
 
     private void handleLogoutButton(ActionEvent event) {
@@ -65,24 +73,43 @@ public class ProfileController implements Initializable {
      * Called externally or via loadUser to set the current user
      */
     public void setUser(UserModel user) {
-        this.loggedInUser = user;
-          if ("club_manager".equalsIgnoreCase(user.getRole()) && user.getClubId() == null) {
-    loadUser(user.getUid());   // <<< burada studentId değil UID
-    return; // loadUser içinde Platform.runLater ile tekrar setUser çağrılacak
-  }
+        if (user == null) {
+            System.err.println("ProfileController.setUser called with null user, skipping.");
+            return;
+        }
+        boolean isClubManager = "club_manager".equalsIgnoreCase(user.getRole());
+        System.out.println("setUser çağrıldı! Rol: " + user.getRole());
+        System.out.println("isClubManager: " + isClubManager);
+        System.out.println("createEventButton: " + createEventButton);
+        System.out.println("editClubButton: " + editClubButton);
+        System.out.println("Buton visible: " + createEventButton.isVisible() + ", managed: " + createEventButton.isManaged());
 
-        // Update labels
+        this.loggedInUser = user;
         nameLabel.setText(user.getName() != null ? user.getName() : "N/A");
         surnameLabel.setText(user.getSurname() != null ? user.getSurname() : "N/A");
         emailLabel.setText(user.getEmail() != null ? user.getEmail() : "N/A");
         roleLabel.setText(user.getRole() != null ? user.getRole() : "N/A");
 
         // Show buttons only for club managers
-        boolean isClubManager = "club_manager".equalsIgnoreCase(user.getRole());
         createEventButton.setVisible(isClubManager);
         createEventButton.setManaged(isClubManager);
         editClubButton.setVisible(isClubManager);
         editClubButton.setManaged(isClubManager);
+
+        // Load manager’s club card
+        if (isClubManager) {
+            clubCardContainer.getChildren().clear();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/club_card.fxml"));
+                Node clubCard = loader.load();
+                ClubCardController ccc = loader.getController();
+                ccc.setClubInfo(user.getClubId(), user.getClubName());
+                ccc.setCurrentUser(user);
+                clubCardContainer.getChildren().add(clubCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         // Load events the user joined
         loadJoinedEvents(user.getStudentId());
@@ -158,6 +185,16 @@ public class ProfileController implements Initializable {
         CreateEventController cec = loader.getController();
         cec.setUser(loggedInUser);
         cec.setClubInfo(loggedInUser.getClubId(), loggedInUser.getClubName());
+    }
+
+    @FXML
+    private void handleEditClubButton(ActionEvent event) {
+        FXMLLoader loader = SceneChanger.switchScene(event, "club_profile.fxml");
+        Object ctrl = loader.getController();
+        if (ctrl instanceof ClubProfileController cpc) {
+            cpc.setCurrentUser(loggedInUser);
+            cpc.setClubContext(loggedInUser.getClubId(), null);
+        }
     }
 
     // @FXML

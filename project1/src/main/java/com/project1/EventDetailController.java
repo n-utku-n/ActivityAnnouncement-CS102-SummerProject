@@ -25,6 +25,7 @@ import javafx.application.Platform;
 
 import java.util.Map;
 import java.util.List;
+import java.io.IOException;
 
 import javafx.scene.Scene;
 import javafx.scene.Node;
@@ -46,6 +47,11 @@ public class EventDetailController {
     @FXML private Button joinButton;
     @FXML private Button commentsButton;
     @FXML private Button quitButton;
+    @FXML private Button editDetailButton;
+    @FXML private Button deleteDetailButton;
+
+    // keep event data for edit/delete
+    private Map<String, Object> eventData;
 
     private String eventId;
     private String clubId;
@@ -72,6 +78,7 @@ public class EventDetailController {
      */
   public void setEventData(String eventId, Map<String, Object> data) {
     this.eventId = eventId;
+    this.eventData = data;
 
     // Başlık ve metinler
     eventNameLabel.setText(getString(data, "name", "Unnamed Event"));
@@ -183,6 +190,26 @@ public class EventDetailController {
         commentsButton.setManaged(false);
     }
 
+    // show edit/delete for club managers on future events
+    boolean isManager = loggedInUser != null
+        && "club_manager".equalsIgnoreCase(loggedInUser.getRole())
+        && eventData.get("clubId").equals(loggedInUser.getClubId());
+    // handle either Firestore Timestamp or java.util.Date
+    Object rawDate = eventData.get("eventDate");
+    java.util.Date eventDateObj;
+    if (rawDate instanceof com.google.cloud.Timestamp ts) {
+        eventDateObj = ts.toDate();
+    } else if (rawDate instanceof java.util.Date ud) {
+        eventDateObj = ud;
+    } else {
+        eventDateObj = new java.util.Date(); // fallback
+    }
+    boolean isFuture = eventDateObj.after(new java.util.Date());
+    editDetailButton.setVisible(isManager && isFuture);
+    editDetailButton.setManaged(isManager && isFuture);
+    deleteDetailButton.setVisible(isManager && isFuture);
+    deleteDetailButton.setManaged(isManager && isFuture);
+
     // Poster
     String posterUrl = getString(data, "posterUrl", null);
     if (posterUrl != null && !posterUrl.isEmpty()) {
@@ -268,6 +295,54 @@ public class EventDetailController {
             cc.setCurrentUser(loggedInUser);
             cc.setEventContext(eventId, eventNameLabel.getText());
         }
+    }
+
+  
+@FXML
+private void onEditDetail(ActionEvent evt) {
+    try {
+        // 1) Load the CreateEvent form
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/create_event.fxml"));
+        Parent root = loader.load();
+
+        // 2) Grab its controller and pass data
+        CreateEventController ctl = loader.getController();
+        ctl.setUser(loggedInUser);
+        ctl.setClubInfo(
+            (String) eventData.get("clubId"),
+            (String) eventData.get("clubName")
+        );
+        ctl.populateForEdit(eventId, eventData);
+
+        // 3) Swap in the new root
+        Stage stage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+        stage.getScene().setRoot(root);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+    @FXML
+    private void onDeleteDetail(ActionEvent evt) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                Firestore db = FirestoreClient.getFirestore();
+                // delete event
+                db.collection("events").document(eventId).delete().get();
+                // decrement club's active event count
+                String clubId = (String)eventData.get("clubId");
+                db.collection("clubs").document(clubId)
+                    .update("activeEventCount", FieldValue.increment(-1)).get();
+                // return to main dashboard
+                Platform.runLater(() -> {
+                    FXMLLoader loader = SceneChanger.switchScene(evt, "main_dashboard.fxml");
+                    MainDashboardController ctrl = (MainDashboardController)loader.getController();
+                    ctrl.setLoggedInUser(loggedInUser);
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     /**

@@ -1,5 +1,12 @@
 package com.project1;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import com.project1.EventDetailController;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +14,7 @@ import java.util.ResourceBundle;
 
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.Timestamp;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,6 +62,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Map;
+import java.time.ZoneId;
+
 public class CreateEventController implements Initializable {
     @FXML private TextField nameField;
     @FXML private ChoiceBox<String> typeChoice;
@@ -66,12 +79,17 @@ public class CreateEventController implements Initializable {
     @FXML private TextArea descriptionArea;
     @FXML private Label posterPathLabel;
     @FXML private Button createButton;
+   private String eventId;
+    private Map<String,Object> eventData;
+    private boolean isEditMode = false;
 
     private File selectedPosterFile;
     private String clubId;
     private String clubName;
 
     private UserModel loggedInUser;
+    // If non-null, indicates we are editing an existing event
+    private String editingEventId;
 
         /**
      * @return ProfileController’dan gelen kulüp ID’si
@@ -93,10 +111,62 @@ public class CreateEventController implements Initializable {
         this.clubName = clubName;
     }
 
+    /**
+     * Pre-fills the form with an existing event’s data.
+     * @param eventId  Firestore ID of the event to edit
+     * @param data     Map of its fields
+     */
+    public void populateForEdit(String eventId, Map<String, Object> data) {
+        this.eventId     = eventId;
+        this.eventData   = data;
+        this.isEditMode  = true;
+
+        // 1) Text fields
+        nameField.setText((String) data.get("name"));
+        String type = (String) data.get("eventType");
+        typeChoice.setValue(type.substring(0,1).toUpperCase() + type.substring(1));
+
+        // 2) Date + time
+        // Handle Firestore Timestamp or java.util.Date
+        Object rawDate = data.get("eventDate");
+        java.util.Date d;
+        if (rawDate instanceof com.google.cloud.Timestamp ts) {
+            d = ts.toDate();
+        } else if (rawDate instanceof java.util.Date ud) {
+            d = ud;
+        } else {
+            d = new java.util.Date(); // fallback to now
+        }
+        java.time.LocalDate ld = d.toInstant()
+                                  .atZone(java.time.ZoneId.systemDefault())
+                                  .toLocalDate();
+        datePicker.setValue(ld);
+        java.time.LocalTime lt = d.toInstant()
+                                  .atZone(java.time.ZoneId.systemDefault())
+                                  .toLocalTime();
+        hourSpinner.getValueFactory().setValue(lt.getHour());
+        minuteSpinner.getValueFactory().setValue(lt.getMinute());
+
+        // 3) Location & participants
+        locationField.setText((String) data.get("location"));
+        minPartSpinner.getValueFactory()
+            .setValue(((Number)data.get("minParticipants")).intValue());
+        maxPartSpinner.getValueFactory()
+            .setValue(((Number)data.get("maxParticipants")).intValue());
+
+        // 4) Description & poster
+        descriptionArea.setText((String) data.get("description"));
+        String poster = (String) data.get("posterUrl");
+        posterPathLabel.setText(poster != null ? poster : "(no file)");
+        createButton.setText("Save Changes");
+    }
+
     /** Called by previous controller to pass in the current user */
     public void setUser(UserModel user) {
         this.loggedInUser = user;
     }
+
+   
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -195,13 +265,45 @@ public class CreateEventController implements Initializable {
             data.put("posterUrl", posterUrl);
 
             Firestore db = FirestoreClient.getFirestore();
-            db.collection("events").add(data).get();
-
-            SceneChanger.switchScene(event, "profile.fxml", controller -> {
-                if (controller instanceof ProfileController pc) {
-                    pc.setUser(loggedInUser);
+            if (isEditMode) {
+                // Update existing event
+                db.collection("events").document(eventId).set(data).get();
+                db.collection("clubs")
+                  .document(clubId)
+                  .update("activeEventCount", FieldValue.increment(1))
+                  .get();
+                // Navigate back to updated event detail view
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
+                Parent root = loader.load();
+                EventDetailController detailCtrl = loader.getController();
+                detailCtrl.setLoggedInUser(loggedInUser);
+                detailCtrl.setEventData(eventId, data);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                Scene scene = stage.getScene();
+                if (scene == null) {
+                    scene = new Scene(root);
+                    stage.setScene(scene);
+                } else {
+                    scene.setRoot(root);
                 }
-            });
+                return;
+            }
+            // for new event creation, keep existing logic
+            else {
+                // Add new event
+                String newEventId = db.collection("events").add(data).get().getId();
+                // increment the club's active event count
+                db.collection("clubs")
+                  .document(clubId)
+                  .update("activeEventCount", FieldValue.increment(1))
+                  .get();
+                // After creation, fallback to profile as before
+                SceneChanger.switchScene(event, "profile.fxml", controller -> {
+                    if (controller instanceof ProfileController pc) {
+                        pc.setUser(loggedInUser);
+                    }
+                });
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Event oluşturulamadı: " + ex.getMessage(), ButtonType.OK)

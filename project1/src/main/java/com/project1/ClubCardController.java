@@ -2,6 +2,9 @@ package com.project1;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.cloud.firestore.DocumentSnapshot;
+import java.util.concurrent.CompletableFuture;
+import javafx.application.Platform;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,8 +15,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 import java.util.Map;
+import java.util.List;
 
 import com.project1.ClubProfileController;
+
+import com.project1.SceneChanger;
 
 /**
  * Controller class for representing a single club card UI component.
@@ -45,9 +51,38 @@ public class ClubCardController {
     private String previousEventId;
     private UserModel currentUser;
 
+    // Store current user's UID for navigation
+    private String currentUserUid;
+
     public void setCurrentUser(UserModel user) {
         this.currentUser = user;
-}
+        if (user != null) {
+            this.currentUserUid = user.getUid();
+        }
+    }
+
+    /**
+     * Loads club data by ID and populates the card.
+     */
+    public void setClubInfo(String clubId, String clubName) {
+        this.clubId = clubId;
+        this.clubName = clubName;
+        // Asynchronously fetch club document
+        CompletableFuture.runAsync(() -> {
+            try {
+                DocumentSnapshot doc = FirestoreClient.getFirestore()
+                    .collection("clubs")
+                    .document(clubId)
+                    .get().get();
+                if (doc.exists()) {
+                    Map<String, Object> data = doc.getData();
+                    Platform.runLater(() -> setData(clubId, data));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
     /**
      * Populates the card UI with the given club data.
      *
@@ -64,17 +99,32 @@ public class ClubCardController {
         int activeCount = activeObj instanceof Number ? ((Number) activeObj).intValue() : 0;
         eventCountLabel.setText("Active Events: " + activeCount);
         participantCountLabel.setText("Participants: 0"); // Gelecekte güncellenecek
-        // Set manager name from nested map
-        String managerName = "Unknown Manager";
+        // Fetch manager name by UID list
         Object mgrObj = data.get("managers");
-        if (mgrObj instanceof Map) {
-            Map<?,?> mgrMap = (Map<?,?>) mgrObj;
-            Object nameField = mgrMap.get("name");
-            if (nameField instanceof String) {
-                managerName = (String) nameField;
+        if (mgrObj instanceof List<?>) {
+            List<String> mgrList = (List<String>) mgrObj;
+            if (!mgrList.isEmpty()) {
+                String mgrId = mgrList.get(0);
+                // asynchronously load user info
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        DocumentSnapshot userDoc = FirestoreClient.getFirestore()
+                            .collection("users")
+                            .document(mgrId)
+                            .get().get();
+                        String fullName = userDoc.getString("name") + " " + userDoc.getString("surname");
+                        Platform.runLater(() -> managerCountLabel.setText("Manager: " + fullName));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Platform.runLater(() -> managerCountLabel.setText("Manager: Unknown"));
+                    }
+                });
+            } else {
+                managerCountLabel.setText("Manager: N/A");
             }
+        } else {
+            managerCountLabel.setText("Manager: N/A");
         }
-        managerCountLabel.setText("Manager: " + managerName);
 
         try {
             String logoUrl = (String) data.get("logoUrl");
@@ -104,12 +154,12 @@ public class ClubCardController {
      */
     @FXML
     private void handleView(ActionEvent event) {
-        FXMLLoader loader = SceneChanger.switchScene(event, "club_profile.fxml");
-        if (loader != null) {
-            ClubProfileController controller = loader.getController();
-            controller.setClubContext(clubId, previousEventId);
-            controller.setCurrentUser(currentUser); 
-        }
+        SceneChanger.switchScene(event, "club_profile.fxml", controller -> {
+            if (controller instanceof ClubProfileController cpc) {
+                cpc.setCurrentUser(currentUser);
+                cpc.setClubContext(clubId, previousEventId);
+            }
+        });
     }
 
     

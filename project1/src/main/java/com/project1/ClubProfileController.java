@@ -1,12 +1,14 @@
 package com.project1;
 
 import java.util.ArrayList;
+import java.util.List;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.FieldValue;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.firebase.cloud.FirestoreClient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,29 +18,25 @@ import javafx.scene.Node;
 import com.project1.EventDetailController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
-import javafx.stage.Stage;
 import javafx.scene.layout.FlowPane;
 import com.google.cloud.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
 import java.io.IOException;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import com.project1.EventDetailController;
-import java.io.IOException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import com.project1.ProfileController;
+import com.project1.SceneChanger;
 
 /**
  * Controller class for the Club Profile view.
@@ -68,6 +66,9 @@ public class ClubProfileController {
     @FXML
     private Label descriptionLabel;
 
+    @FXML private Label participantCountLabel;
+    @FXML private Button followButton;
+
     /** VBox container for managers of the club */
     @FXML
     private VBox managersContainer;
@@ -88,9 +89,13 @@ public class ClubProfileController {
 
 
     private UserModel currentUser;
+    private String currentUserUid;
 
     public void setCurrentUser(UserModel user) {
         this.currentUser = user;
+        if (user != null) {
+            this.currentUserUid = user.getUid();
+        }
     }
 
     @FXML
@@ -145,35 +150,45 @@ public class ClubProfileController {
 
                 // Set club name and foundation date
                 clubNameLabel.setText((String) data.get("name"));
-                foundationDateLabel.setText("Founded: " + data.get("foundationDate"));
+                // Parse foundationDate stored as Timestamp and format
+                com.google.cloud.Timestamp foundationTs = doc.getTimestamp("foundationDate");
+                if (foundationTs != null) {
+                    LocalDate foundationDate = foundationTs.toDate()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                    String formatted = foundationDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+                    foundationDateLabel.setText("Founded: " + formatted);
+                } else {
+                    foundationDateLabel.setText("Founded: N/A");
+                }
 
                 // Set club description
                 descriptionLabel.setText((String) data.get("description"));
 
-                // Load managers for this club from users collection
-                try {
-                    Query mgrQuery = db.collection("users")
-                        .whereEqualTo("clubId", clubId)
-                        .whereEqualTo("role", "manager");
-                    List<QueryDocumentSnapshot> mgrDocs = mgrQuery.get().get().getDocuments();
-                    List<String> managerNames = new ArrayList<>();
-                    for (QueryDocumentSnapshot mDoc : mgrDocs) {
-                        String name = mDoc.getString("name");
-                        if (name != null) managerNames.add(name);
-                    }
-                    // If no managers found, show default
-                    if (managerNames.isEmpty()) {
-                        managerNames.add("Unknown Manager");
-                    }
-                    // Populate manager labels
-                    managersContainer.getChildren().clear();
-                    for (String name : managerNames) {
-                        Label lbl = new Label(name);
+                // Load managers from the club document's managers field
+                @SuppressWarnings("unchecked")
+                List<String> managerIds = (List<String>) doc.get("managers");
+                managersContainer.getChildren().clear();
+                if (managerIds == null || managerIds.isEmpty()) {
+                    Label lbl = new Label("Unknown Manager");
+                    lbl.getStyleClass().add("manager-label");
+                    managersContainer.getChildren().add(lbl);
+                } else {
+                    for (String managerId : managerIds) {
+                        DocumentSnapshot mDoc = db.collection("users")
+                            .document(managerId)
+                            .get().get();
+                        String first = mDoc.getString("name");
+                        String last = mDoc.getString("surname");
+                        String managerName = ((first != null) ? first : "") + " " + ((last != null) ? last : "");
+                        if (managerName.trim().isEmpty()) {
+                            managerName = "Unknown Manager";
+                        }
+                        Label lbl = new Label(managerName);
                         lbl.getStyleClass().add("manager-label");
                         managersContainer.getChildren().add(lbl);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
 
                 // Load and display logo
@@ -183,6 +198,18 @@ public class ClubProfileController {
                 }
 
                 // Clear old cards (if legacy system used)
+                // Populate follower count and button
+                @SuppressWarnings("unchecked")
+                List<String> followerIds = (List<String>) data.get("participants");
+                int followerCount = followerIds != null ? followerIds.size() : 0;
+                participantCountLabel.setText("Followers: " + followerCount);
+                boolean isFollowing = followerIds != null && followerIds.contains(currentUserUid);
+                followButton.setText(isFollowing ? "Unfollow" : "Follow");
+                followButton.getStyleClass().removeAll("follow-button","unfollow-button");
+                followButton.getStyleClass().add(isFollowing ? "unfollow-button" : "follow-button");
+                followButton.setVisible(true);
+                followButton.setManaged(true);
+
                 eventCardContainer.getChildren().clear();
             }
 
@@ -220,9 +247,9 @@ public class ClubProfileController {
                         clubCtrl.setData(doc.getId(), doc.getData());
                         eventListContainer.getChildren().add(clubCard);
 
-                        // If not expired, also add to Active Events
-                        Timestamp endTs = doc.getTimestamp("endDate");
-                        if (endTs == null || endTs.toDate().after(new Date())) {
+                        // Add only upcoming (not yet started) events to Active Events
+                        Timestamp eventTs = doc.getTimestamp("eventDate");
+                        if (eventTs != null && eventTs.toDate().after(new Date())) {
                             FXMLLoader loaderActive = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
                             VBox activeCard = loaderActive.load();
                             EventCardController activeCtrl = loaderActive.getController();
@@ -243,23 +270,43 @@ public class ClubProfileController {
     }
 
     /**
-     * Handles the "Back" button action to always return to the Event Detail screen.
+     * Handles the "Back" button action to return either to Event Detail or Profile.
      */
     @FXML
     private void handleBack(ActionEvent event) {
-        try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_detail.fxml"));
-        Parent detailRoot = loader.load();
-        EventDetailController detailCtrl = loader.getController();
         if (previousEventId != null && !previousEventId.trim().isEmpty()) {
-            detailCtrl.setLoggedInUser(this.currentUser); // <-- BUNU EKLE!
-            detailCtrl.setEventId(previousEventId);
+            // Return to Event Detail
+            SceneChanger.switchScene(event, "event_detail.fxml", controller -> {
+                if (controller instanceof EventDetailController edc) {
+                    edc.setLoggedInUser(currentUser);
+                    edc.setEventId(previousEventId);
+                }
+            });
+        } else {
+            // Return to Profile
+            SceneChanger.switchScene(event, "profile.fxml", controller -> {
+                if (controller instanceof ProfileController pc) {
+                    pc.setUser(currentUser);
+                }
+            });
         }
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(detailRoot));
-        stage.setMaximized(true);
-    } catch (IOException e) {
-        e.printStackTrace();
     }
+
+    @FXML
+    private void handleFollow(ActionEvent evt) {
+      try {
+        DocumentReference clubRef = FirestoreClient
+          .getFirestore()
+          .collection("clubs")
+          .document(clubId);
+        if ("Follow".equals(followButton.getText())) {
+          clubRef.update("participants", FieldValue.arrayUnion(currentUserUid)).get();
+        } else {
+          clubRef.update("participants", FieldValue.arrayRemove(currentUserUid)).get();
+        }
+        loadClubData();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
     }
 }

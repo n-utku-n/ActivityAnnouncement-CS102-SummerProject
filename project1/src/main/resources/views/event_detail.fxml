@@ -34,19 +34,14 @@
               onAction="#handleBack"
               styleClass="back-button"/>
     </HBox>
-
     <!-- Poster -->
-    <StackPane styleClass="framed-box">
+    <StackPane styleClass="framed-box" VBox.vgrow="ALWAYS">
       <ImageView fx:id="eventImage"
                  fitWidth="840"
-                 preserveRatio="true"
-                 pickOnBounds="true">
+                 preserveRatio="true">
         <image>
           <Image url="@../assets/event-placeholder.png"/>
         </image>
-        <clip>
-          <Rectangle width="840" height="473" arcWidth="30" arcHeight="30"/>
-        </clip>
       </ImageView>
     </StackPane>
 
@@ -128,6 +123,24 @@
           <Insets bottom="30"/>
         </VBox.margin>
       </Button>
+    </HBox>
+    <HBox alignment="BOTTOM_LEFT" spacing="8">
+      <padding>
+        <Insets top="10" left="20"/>
+      </padding>
+      <Button fx:id="editDetailButton"
+              text="Edit"
+              visible="false" managed="false"
+              onAction="#onEditDetail"
+              styleClass="edit-button"/>
+      <Button fx:id="deleteDetailButton"
+              text="Delete"
+              visible="false" managed="false"
+              onAction="#onDeleteDetail"
+              styleClass="delete-button"/>
+    <VBox.margin>
+      <Insets top="20"/>
+    </VBox.margin>
     </HBox>
         </VBox>
       </StackPane>

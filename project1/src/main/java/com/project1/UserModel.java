@@ -20,6 +20,9 @@ public class UserModel {
     private String studentId;
     private String email;
     private String role;
+    private String clubId;
+    private String clubName;
+     private String uid;
 
     /**
      * No-argument constructor required by Firestore.
@@ -51,7 +54,8 @@ public class UserModel {
     public String getName() {
         return name;
     }
-
+    public String getUid() { return uid; }
+    public void setUid(String uid) { this.uid = uid; }
     /** @return the user's last name */
     public String getSurname() {
         return surname;
@@ -97,5 +101,19 @@ public class UserModel {
     /** @param role sets the user's role */
     public void setRole(String role) {
         this.role = role; 
+    }
+
+      public String getClubId() {
+        return clubId;
+    }
+    public void setClubId(String clubId) {
+        this.clubId = clubId;
+    }
+
+    public String getClubName() {
+        return clubName;
+    }
+    public void setClubName(String clubName) {
+        this.clubName = clubName;
     }
 }

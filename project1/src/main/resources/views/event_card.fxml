@@ -2,6 +2,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -17,12 +18,13 @@
       stylesheets="@../style/event_card.css"
       prefWidth="375"
       prefHeight="260"
-      onMouseClicked="#onCardClicked"   
+      onMouseClicked="#onCardClicked"
       minWidth="375"
       maxWidth="375">
 
   <!-- 1) Üstte oval kenarlı foto -->
   <StackPane alignment="CENTER" styleClass="photo-wrapper">
+
     <Rectangle styleClass="photo-bg"
                arcWidth="16" arcHeight="16"/>
     <ImageView fx:id="eventImage"
@@ -36,14 +38,22 @@
       </clip>
     </ImageView>
 
+    <Label fx:id="eventFullLabel"
+           text="Event Full"
+           styleClass="event-full-label"
+           visible="false"
+           managed="false"
+           StackPane.alignment="TOP_RIGHT"
+           style="-fx-translate-y: 200; -fx-padding: 8 12 0 0;"/>
+
     <!-- Rating yıldızları eventImage'in üstünde sağ üst köşede -->
     <HBox fx:id="ratingBox"
           spacing="4"
           alignment="CENTER_RIGHT"
-          style="-fx-padding: 8 12 0 0; -fx-background-color: transparent; -fx-translate-y: 140;"
+          style="-fx-padding: 28 12 0 0; -fx-background-color: transparent; -fx-translate-y: 130;"
           StackPane.alignment="TOP_RIGHT">
-        <Label fx:id="ratingStarsLabel" styleClass="rating-stars"/>
-        <Label fx:id="ratingValueLabel" styleClass="rating-value"/>
+      <Label fx:id="ratingStarsLabel" styleClass="rating-stars"/>
+      <Label fx:id="ratingValueLabel" styleClass="rating-value"/>
     </HBox>
 
   </StackPane>
@@ -77,9 +87,9 @@
         <StackPane styleClass="progress-container">
           <ProgressBar fx:id="participantBar" styleClass="participant-bar"/>
           <Rectangle fx:id="minParticipantLine"
-                    width="2" 
-                    height="12"
-                    styleClass="min-participant-line"/>
+                     width="2"
+                     height="12"
+                     styleClass="min-participant-line"/>
         </StackPane>
         <Label fx:id="currentParticipantsText" styleClass="participant-number"/>
         <Label text="/" styleClass="participant-slash"/>
@@ -87,4 +97,5 @@
       </HBox>
     </VBox>
   </HBox>
+
 </VBox>

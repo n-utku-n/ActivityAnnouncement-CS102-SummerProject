@@ -71,3 +71,40 @@
   -fx-text-fill: #555;
   -fx-padding: 0 0 0 4;
 }
+
+/* Edit and Delete buttons on event cards for club managers */
+.event-card #editButton {
+    -fx-background-color: #3B82F6;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-padding: 4 8;
+    -fx-cursor: hand;
+}
+.event-card #editButton:hover  {
+    -fx-background-color: #2563EB;
+}
+
+.event-card #deleteButton  {
+    -fx-background-color: #EF4444;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-padding: 4 8;
+    -fx-cursor: hand;
+}
+.event-card #deleteButton:hover {
+    -fx-background-color: #DC2626;
+}
+
+/* "Event Full" label shown when a club-manager’s event is full */
+.event-card #eventFullLabel {
+    -fx-background-color: transparent;
+    -fx-text-fill: #EF4444;
+    -fx-font-size: 11px;
+    -fx-padding: 0;
+    -fx-background-radius: 0;
+    -fx-alignment: top-right;
+    -fx-translate-y: 220;    /* keep it at the same vertical offset */
+    -fx-translate-x: -8;     /* same horizontal offset */
+}

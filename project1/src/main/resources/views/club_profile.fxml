@@ -33,6 +33,16 @@
                 <Label fx:id="clubNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
                 <Label fx:id="foundationDateLabel" />
             </VBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                  <Label fx:id="participantCountLabel"
+                         text="Followers: 0"
+                         styleClass="participant-count"/>
+                  <Button fx:id="followButton"
+                          text="Follow"
+                          onAction="#handleFollow"
+                          visible="false" managed="false"
+                          styleClass="follow-button"/>
+                </HBox>
             <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="backButton"
                     text="Back"

@@ -1,5 +1,7 @@
 package com.project1;
 
+import com.project1.UserModel;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -56,7 +58,7 @@ public class MainDashboardController {
     
      @FXML
     private FlowPane mainEventContainer;// VBox yerine FlowPane
-
+    
 
 
 
@@ -76,16 +78,12 @@ public class MainDashboardController {
     }
     private UserModel loggedInUser;
 
-    @FXML
+   @FXML
 private void handleSearch(ActionEvent event) {
     String keyword = searchField.getText().trim().toLowerCase();
     System.out.println("🔎 Search: " + keyword);
-    if (keyword.isEmpty()) {
-        loadEvents(); // Arama boşsa tüm eventleri göster
-        return;
-    }
-
     mainEventContainer.getChildren().clear();
+
     try {
         List<com.google.cloud.firestore.QueryDocumentSnapshot> documents = com.google.firebase.cloud.FirestoreClient
                 .getFirestore()
@@ -97,16 +95,22 @@ private void handleSearch(ActionEvent event) {
         for (com.google.cloud.firestore.QueryDocumentSnapshot doc : documents) {
             String name = doc.getString("name");
             String desc = doc.getString("description");
-            if ((name != null && name.toLowerCase().contains(keyword)) ||
-                (desc != null && desc.toLowerCase().contains(keyword))) {
+            String clubName = doc.getString("clubName");  
 
-                // Event kartı oluştur
+            com.google.cloud.Timestamp ts = doc.getTimestamp("eventDate");
+            if (ts != null && ts.toDate().before(new Date())) {
+                continue;  // geçmiş eventleri atla
+            }
+
+            if ((name != null && name.toLowerCase().contains(keyword)) ||
+                (desc != null && desc.toLowerCase().contains(keyword)) || 
+                (clubName != null && clubName.toLowerCase().contains(keyword))) {
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/event_card.fxml"));
                 VBox eventCard = loader.load();
                 EventCardController controller = loader.getController();
                 controller.setCurrentUser(loggedInUser);
 
-                // clubName/clubId işlerini de ekle istersen (yukarıdaki loadEvents ile aynı şekilde)
                 Map<String, Object> data = doc.getData();
                 String clubId = (String) data.get("clubId");
                 if (clubId != null && !clubId.isEmpty()) {
@@ -132,6 +136,7 @@ private void handleSearch(ActionEvent event) {
                 } else {
                     data.put("clubName", "Unknown Club");
                 }
+
                 controller.setData(doc.getId(), data);
                 mainEventContainer.getChildren().add(eventCard);
             }
@@ -146,6 +151,7 @@ private void handleSearch(ActionEvent event) {
      */
     public void setLoggedInUser(UserModel user) {
         this.loggedInUser = user;
+        System.out.println("❇ setLoggedInUser: clubId=" + user.getClubId() + ", clubName=" + user.getClubName());
         loadEvents();
     }
     private void loadAppLogo() {
@@ -246,16 +252,30 @@ private void handleSearch(ActionEvent event) {
 }
 
 
-    /**
-     * TODO: not implemented
-     * @author Utku
-     */
-    @FXML
-    private void handleProfile(ActionEvent event) {
-        // Navigate to the profile view using SceneChanger
-        SceneChanger.switchScene(event, "profile.fxml");
-    }
+ 
+   @FXML
+private void onProfileButtonClicked(ActionEvent event) {
+    // SceneChanger.switchScene(event, "profile.fxml", controller -> {
+    //     if (controller instanceof ProfileController pc) {
+    //         pc.setUser(loggedInUser);
+    //     }
+    // });
 
+        FXMLLoader loader = SceneChanger.switchScene(event, "profile.fxml");
+        ProfileController pc = loader.getController();
+        pc.setUser(loggedInUser);
+}
+
+public void setUser(UserModel user) {
+
+    this.loggedInUser = user;
+  
+    // Burası önemli: Eventleri yeniden yükle!
+    
+    loadEvents();
+   
+}
+   
     private void loadAllEvents() {
     eventCardContainer.getChildren().clear();
 

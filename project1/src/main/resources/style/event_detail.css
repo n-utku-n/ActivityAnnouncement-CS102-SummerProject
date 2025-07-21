@@ -68,6 +68,39 @@
     -fx-effect: none;
 }
 
+/* Edit and Delete buttons styling for event detail */
+.edit-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #3B82F6; /* blue border */
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #3B82F6;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.edit-button:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.1);
+}
+
+.delete-button {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #EF4444; /* red border */
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #EF4444;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.delete-button:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+}
+
 .framed-box {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #D1D5DB;
@@ -140,4 +173,20 @@
 .comment-card:hover {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
     -fx-background-color: #F9FAFB;
+}
+.quit-button {
+    -fx-background-color: #EF4444; /* Koyu kırmızı */
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-font-size: 16px;
+    -fx-background-radius: 24px;
+    -fx-padding: 12px 32px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.5), 6, 0, 0, 2);
+    -fx-transition: background-color 0.3s ease;
+}
+
+.quit-button:hover {
+    -fx-background-color: #DC2626; /* Biraz daha koyu hover rengi */
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.7), 8, 0, 0, 3);
 }

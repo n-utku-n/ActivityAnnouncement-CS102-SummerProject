@@ -53,6 +53,7 @@
       <!-- Profil Butonu (Dikkat: Sadece profile-button class!) -->
       <Button fx:id="profileButton"
               text="Profile"
+              onAction="#onProfileButtonClicked"
               styleClass="profile-button"/>
     </HBox>
   </top>

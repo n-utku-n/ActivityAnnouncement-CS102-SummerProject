@@ -4,11 +4,14 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -49,6 +52,7 @@ public class AddClubController {
 
     /** Holds the selected logo file from user's system */
     private File selectedLogoFile;
+    private String logoUrl;
 
     /**
      * Handles logo file selection using a FileChooser.
@@ -56,19 +60,62 @@ public class AddClubController {
      *
      * @param event the ActionEvent triggered by the 'Select Logo' button.
      */
-    @FXML
-    private void handleSelectLogo(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Club Logo");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Files", "*.png"));
-        selectedLogoFile = fileChooser.showOpenDialog(new Stage());
+@FXML
+private void handleSelectLogo(ActionEvent event) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Club Logo");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.webp")
+    );
+    selectedLogoFile = fileChooser.showOpenDialog(new Stage());
 
-        if (selectedLogoFile != null) {
-            logoFileNameLabel.setText(selectedLogoFile.getName());
-        } else {
-            logoFileNameLabel.setText("No file selected");
+    if (selectedLogoFile != null) {
+        logoFileNameLabel.setText(selectedLogoFile.getName());
+
+        try {
+            // Dosya uzantısından MIME tipi belirle
+            String fileNameLower = selectedLogoFile.getName().toLowerCase();
+            String contentType;
+            if (fileNameLower.endsWith(".png")) contentType = "image/png";
+            else if (fileNameLower.endsWith(".jpg") || fileNameLower.endsWith(".jpeg")) contentType = "image/jpeg";
+            else if (fileNameLower.endsWith(".webp")) contentType = "image/webp";
+            else {
+                showAlert(Alert.AlertType.ERROR, "Unsupported image format.");
+                return;
+            }
+
+            // Logo dosyasını Firebase'e yükle
+            String logoFileName = "logos/" + UUID.randomUUID() + selectedLogoFile.getName().substring(selectedLogoFile.getName().lastIndexOf('.'));
+            String downloadToken = UUID.randomUUID().toString();
+            String bucketName = StorageClient.getInstance().bucket().getName();
+
+            BlobId blobId = BlobId.of(bucketName, logoFileName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                    .setContentType(contentType)
+                    .setMetadata(Map.of("firebaseStorageDownloadTokens", downloadToken))
+                    .build();
+
+            try (InputStream logoStream = new FileInputStream(selectedLogoFile)) {
+                StorageClient.getInstance().bucket().getStorage().create(blobInfo, logoStream);
+            }
+
+            // Public URL oluştur
+            logoUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucketName + "/o/"
+                    + logoFileName.replace("/", "%2F")
+                    + "?alt=media&token=" + downloadToken;
+
+            System.out.println("✅ Logo uploaded to Firebase: " + logoUrl);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "❌ Failed to upload logo: " + e.getMessage());
         }
+
+    } else {
+        logoFileNameLabel.setText("No file selected");
     }
+}
+
 
     /**
      * Switches back to the admin dashboard scene.
@@ -87,7 +134,7 @@ public class AddClubController {
      *
      * @param event the ActionEvent triggered by the 'Create Club' button.
      */
-   @FXML
+  @FXML
 private void handleCreateClub(ActionEvent event) {
     try {
         String name = clubNameField.getText();
@@ -95,29 +142,10 @@ private void handleCreateClub(ActionEvent event) {
         LocalDate foundationDate = foundationDatePicker.getValue();
 
         // Validation: Check if all fields are filled
-        if (name.isEmpty() || description.isEmpty() || foundationDate == null || selectedLogoFile == null) {
+        if (name.isEmpty() || description.isEmpty() || foundationDate == null || selectedLogoFile == null || logoUrl == null) {
             showAlert(Alert.AlertType.ERROR, "Please fill all fields and select a logo.");
             return;
         }
-
-        // Upload logo to Firebase Storage
-        String logoFileName = "logos/" + UUID.randomUUID() + ".png";
-        try (InputStream logoStream = new FileInputStream(selectedLogoFile)) {
-            StorageClient.getInstance().bucket().create(logoFileName, logoStream, "image/png");
-        }
-
-        // Optional: Confirm the file was uploaded
-        if (StorageClient.getInstance().bucket().get(logoFileName) == null) {
-            showAlert(Alert.AlertType.ERROR, "Logo upload failed, please try again.");
-            return;
-        }
-
-        // Generate public URL for the uploaded logo
-       String logoUrl = "https://firebasestorage.googleapis.com/v0/b/project1-9c22f.appspot.com/o/"
-        + logoFileName.replace("/", "%2F")
-        + "?alt=media";
-
-        System.out.println("✅ Logo URL: " + logoUrl);
 
         // Create club data map
         Firestore db = FirestoreClient.getFirestore();
@@ -125,7 +153,7 @@ private void handleCreateClub(ActionEvent event) {
         clubData.put("name", name);
         clubData.put("description", description);
         clubData.put("foundationDate", foundationDate.toString());
-        clubData.put("logoUrl", logoUrl);
+        clubData.put("logoUrl", logoUrl);  // logoUrl artık token içeren geçerli URL
         clubData.put("managers", new java.util.ArrayList<>());
 
         // Add to Firestore
@@ -139,7 +167,8 @@ private void handleCreateClub(ActionEvent event) {
         e.printStackTrace();
         showAlert(Alert.AlertType.ERROR, "❌ Failed to create club: " + e.getMessage());
     }
-    }
+}
+
 
     /**
      * Utility method to show alerts to the user.

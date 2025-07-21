@@ -1,8 +1,10 @@
 package com.project1;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,4 +43,16 @@ public class FirebaseInitializer {
             e.printStackTrace();
         }
     }
+
+        private static Firestore db;
+
+        /**
+         * Returns the initialized Firestore instance.
+         */
+        public static Firestore getFirestore() {
+            if (db == null) {
+                db = FirestoreClient.getFirestore();
+            }
+            return db;
+        }
 }

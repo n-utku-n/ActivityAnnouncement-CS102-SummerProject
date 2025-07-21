@@ -37,10 +37,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 2, 0, 0, 1);
 }
 
-#roleFilterComboBox {
-    -fx-font-size: 14px;
-    -fx-pref-width: 140px;
-}
 
 #refreshButton {
     -fx-background-color: #3B82F6;
@@ -90,4 +86,18 @@
     -fx-font-size: 14px;
     -fx-padding: 6px 12px;
     -fx-text-fill: #374151;
+}
+
+#clubsListBox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: transparent;
+}
+#userListBox, #eventListBox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: transparent;
+}
+#topBar {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
 }

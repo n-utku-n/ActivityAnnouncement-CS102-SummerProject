@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.project1.UserCardAdminController"
+      spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10; -fx-border-color: lightgray; -fx-border-radius: 5;">
+    
+    <!-- Kullanıcı bilgileri -->
+    <VBox spacing="5">
+        <Label fx:id="nameLabel" text="Name Surname" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+        <Label fx:id="roleLabel" text="Role: student" style="-fx-font-size: 12;"/>
+    </VBox>
+
+    <!-- Kulüp seçimi -->
+    <ComboBox fx:id="roleComboBox" promptText="Select Role" prefWidth="180"/>
+
+    <!-- Butonlar -->
+    <Button fx:id="changeRoleButton" text="Change Role" onAction="#handleChangeRole"/>
+    <Button fx:id="detailsButton" text="Details"/>
+    <Button fx:id="deleteButton" text="Delete" style="-fx-text-fill: red;"/>
+
+</HBox>

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.application.Platform;
 
 import java.util.Map;
 
@@ -94,6 +95,7 @@ public void setData(String id, Map<String, Object> data) {
 
 
 
+
     /**
      * Handles the "View" button click to navigate to the club profile screen.
      * 
@@ -109,30 +111,39 @@ public void setData(String id, Map<String, Object> data) {
      * Handles the "Delete" button click with a confirmation dialog.
      * Deletes the club from Firestore and refreshes the club list.
      */
-    @FXML
-    private void handleDelete() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Delete Club");
-        confirm.setHeaderText("Are you sure you want to delete this club?");
-        confirm.setContentText("This action cannot be undone.");
+   @FXML
+private void handleDelete() {
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+    confirm.setTitle("Delete Club");
+    confirm.setHeaderText("Are you sure you want to delete this club?");
+    confirm.setContentText("This action cannot be undone.");
 
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                Firestore db = FirestoreClient.getFirestore();
-                ApiFuture<WriteResult> future = db.collection("clubs").document(clubId).delete();
+    confirm.showAndWait().ifPresent(response -> {
+        if (response == ButtonType.OK) {
+            Firestore db = FirestoreClient.getFirestore();
+            ApiFuture<WriteResult> future = db.collection("clubs").document(clubId).delete();
 
-                try {
-                    future.get(); // Waits for the deletion to complete
-                    System.out.println("✅ Club deleted: " + clubId);
+            try {
+                future.get(); // Wait for deletion
+                System.out.println("✅ Club deleted: " + clubId);
 
-                    if (dashboardController != null) {
-                        dashboardController.refreshClubList(); // Refresh the UI
-                    }
-                } catch (Exception e) {
-                    System.err.println("❌ Failed to delete club: " + e.getMessage());
-                    e.printStackTrace();
+                if (parentController != null) {
+                    parentController.refreshClubList();
                 }
+
+            } catch (Exception e) {
+                System.err.println("❌ Failed to delete club: " + e.getMessage());
+                e.printStackTrace();
             }
-        });
-    }
+        }
+    });
+}
+
+
+
+        private AdminDashboardController parentController;
+
+        public void setParentController(AdminDashboardController controller) {
+            this.parentController = controller;
+        }
 }
